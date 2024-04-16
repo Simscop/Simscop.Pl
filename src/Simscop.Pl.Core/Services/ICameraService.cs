@@ -11,18 +11,6 @@ namespace Simscop.Pl.Core.Services;
 public interface ICameraService : IDeviceService
 {
     /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public bool Connect();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public bool DisConnect();
-
-    /// <summary>
     /// 采集并返回一张当前的图像
     /// </summary>
     /// <param name="img"></param>

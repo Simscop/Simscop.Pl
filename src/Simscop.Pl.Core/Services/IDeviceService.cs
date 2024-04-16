@@ -34,8 +34,20 @@ public interface IDeviceService
     public Dictionary<string, string>? Reserved { get; set; }
 
     /// <summary>
-    /// 设备运行环境检验
+    /// 设备运行环境检验,不需要连接的情况下
     /// </summary>
     /// <returns></returns>
     public bool Valid();
+
+    /// <summary>
+    /// 初始化设备
+    /// </summary>
+    /// <returns></returns>
+    public bool Initialize();
+
+    /// <summary>
+    /// 反初始化设备
+    /// </summary>
+    /// <returns></returns>
+    public bool DeInitialize();
 }
