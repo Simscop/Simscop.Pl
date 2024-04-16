@@ -106,9 +106,9 @@ public interface ICameraService : IDeviceService
     public LevelRange LevelRange { get; set; }
 
     /// <summary>
-    /// 当前实际色阶范围
+    /// 当前实际左右色阶
     /// </summary>
-    public LevelRange CurrentRange { get; set; }
+    public LevelRange CurrentLevel { get; set; }
 
     /// <summary>
     /// 存取图片
