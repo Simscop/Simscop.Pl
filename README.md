@@ -27,8 +27,16 @@
 
 ### 3. Spectrometer
 
-光谱仪使用的公司为 _[OceanInsight](https://www.oceaninsight.com/products/software/drivers/oceandirect/)_
+~~光谱仪使用的公司为 _[OceanInsight](https://www.oceaninsight.com/products/software/drivers/oceandirect/)_~~
 
+安装地址为 [omnidriver-and-spam](https://www.oceaninsight.com/support/software-downloads/omnidriver-and-spam/)
+
+Wrapper API文档 [Wrapper](https://www.oceaninsight.com/globalassets/catalog-blocks-and-images/software-downloads-installers/javadocs-api/omnidriver/index.html)
+
+1. 首先安装 `omnidriverspam-2.56-win32-installer.exe`
+2. 前往安装目录的 `OOI_HOME` 找到 `NETOmniDriver.dll` 和 `NETSpam.dll` 添加引用
+
+*NOTE：dll找对应环境用的时PATH，所以x86和x64最好只选择一个来安装，不然容易出问题*
 
 ## 软件依赖
 
