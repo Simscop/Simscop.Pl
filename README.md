@@ -25,6 +25,13 @@
 
 *NOTE：其中有一个虚拟设备，可以用来辅助开发*
 
+型号如下，
+
+| Axis |    Model    |
+| :--: | :----------: |
+|  XY  | X-LSM200A-E0 |
+|  Z  |   X-VSR40   |
+
 ### 3. Spectrometer
 
 ~~光谱仪使用的公司为 _[OceanInsight](https://www.oceaninsight.com/products/software/drivers/oceandirect/)_~~
