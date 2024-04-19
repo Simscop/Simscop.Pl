@@ -3,15 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simscop.Pl.Core", "Simscop.Pl.Core\Simscop.Pl.Core.csproj", "{BC8AB5AE-9789-448E-BBDD-71DA5DC8CC99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simscop.Pl.Core", "Simscop.Pl.Core\Simscop.Pl.Core.csproj", "{BC8AB5AE-9789-448E-BBDD-71DA5DC8CC99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Simscop.Pl.Core", "..\test\Test.Simscop.Pl.Core\Test.Simscop.Pl.Core.csproj", "{F9CC6E4E-2ED1-446E-BD9C-8C4669D1A90E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Simscop.Pl.Core", "..\test\Test.Simscop.Pl.Core\Test.Simscop.Pl.Core.csproj", "{F9CC6E4E-2ED1-446E-BD9C-8C4669D1A90E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{4796B84E-3A3A-481E-887D-BCC49FA6A9BA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4796B84E-3A3A-481E-887D-BCC49FA6A9BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simscop.Pl.Hardware", "Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj", "{A33AAEBD-AC5E-4FDB-B6D3-5CB9C5EAA0CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simscop.Pl.Hardware", "Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj", "{A33AAEBD-AC5E-4FDB-B6D3-5CB9C5EAA0CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Simscop.Pl.Hardware", "..\test\Test.Simscop.Pl.Hardware\Test.Simscop.Pl.Hardware.csproj", "{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Simscop.Pl.Hardware", "..\test\Test.Simscop.Pl.Hardware\Test.Simscop.Pl.Hardware.csproj", "{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "external", "external", "{0642B2C4-EABA-4791-9175-45A44BFDBF3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OxyPlot.SkiaSharp.Wpf", "..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj", "{91BA7F5A-662D-4CA3-9D08-D3B484B00894}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OxyPlot.Wpf", "..\external\oxyplot\Source\OxyPlot.Wpf\OxyPlot.Wpf.csproj", "{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simscop.Pl.Ui", "Simscop.Pl.Ui\Simscop.Pl.Ui.csproj", "{CEA891BF-4AA6-4BF1-B278-F18103537662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{3764606F-A3D3-485B-8280-724806C57FE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +45,22 @@ Global
 		{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3764606F-A3D3-485B-8280-724806C57FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3764606F-A3D3-485B-8280-724806C57FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3764606F-A3D3-485B-8280-724806C57FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3764606F-A3D3-485B-8280-724806C57FE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,6 +68,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F9CC6E4E-2ED1-446E-BD9C-8C4669D1A90E} = {4796B84E-3A3A-481E-887D-BCC49FA6A9BA}
 		{B8C5C8AE-4C62-4D85-817E-2E92070B0E3B} = {4796B84E-3A3A-481E-887D-BCC49FA6A9BA}
+		{91BA7F5A-662D-4CA3-9D08-D3B484B00894} = {0642B2C4-EABA-4791-9175-45A44BFDBF3B}
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B} = {0642B2C4-EABA-4791-9175-45A44BFDBF3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5792221-9468-425D-BEB6-3515A1F6779A}
