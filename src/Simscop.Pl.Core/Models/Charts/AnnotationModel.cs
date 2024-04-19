@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Simscop.Pl.Core.Models.Charts.Constants;
 
 namespace Simscop.Pl.Core.Models.Charts;
 
-public partial class AxisModel : ObservableObject
+public partial class AnnotationModel : ObservableObject
 {
     /// <summary>
     /// 
@@ -24,27 +25,29 @@ public partial class AxisModel : ObservableObject
     }
 
     [ObservableProperty]
-    private string? _title;
+    private double _fontSize = 14;
 
     [ObservableProperty]
-    private string? _unit;
+    private double _fontWeight = 500;
 
     [ObservableProperty]
-    private bool _isVisible = true;
+    private string _format = "{4}";
 
     [ObservableProperty]
-    private bool _isZoom = true;
+    private Color _textColor = Color.Red;
 
     [ObservableProperty]
-    private bool _isPanning = true;
+    private Color _pointColor = Color.Red;
 
     [ObservableProperty]
-    private TickStyle _tickStyle = TickStyle.None;
+    private double _pointSize;
 
     [ObservableProperty]
-    private double _viewMinimum = double.MinValue;
+    private LineStyle _lineSytle = LineStyle.Automatic;
 
     [ObservableProperty]
-    private double _viewMaximum = double.MaxValue;
+    private double _thickness = 2;
+
+    [ObservableProperty]
+    private Color _lineColor = Color.Red;
 }
-

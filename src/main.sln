@@ -19,9 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OxyPlot.SkiaSharp.Wpf", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OxyPlot.Wpf", "..\external\oxyplot\Source\OxyPlot.Wpf\OxyPlot.Wpf.csproj", "{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simscop.Pl.Ui", "Simscop.Pl.Ui\Simscop.Pl.Ui.csproj", "{CEA891BF-4AA6-4BF1-B278-F18103537662}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{3764606F-A3D3-485B-8280-724806C57FE1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simscop.Pl.Ui", "Simscop.Pl.Ui\Simscop.Pl.Ui.csproj", "{CEA891BF-4AA6-4BF1-B278-F18103537662}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +55,6 @@ Global
 		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3764606F-A3D3-485B-8280-724806C57FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3764606F-A3D3-485B-8280-724806C57FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3764606F-A3D3-485B-8280-724806C57FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3764606F-A3D3-485B-8280-724806C57FE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

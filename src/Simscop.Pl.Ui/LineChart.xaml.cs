@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -8,6 +9,8 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup.Localizer;
 using System.Windows.Media;
+using HarfBuzzSharp;
+using Lift.UI.Tools.Extension;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
@@ -16,6 +19,8 @@ using OxyPlot.Series;
 using OxyPlot.Wpf;
 using Simscop.Pl.Core.Models.Charts;
 using Simscop.Pl.Ui.Charts;
+using Simscop.Pl.Ui.Extensions;
+using PlotCommands = OxyPlot.PlotCommands;
 using TickStyle = OxyPlot.Axes.TickStyle;
 
 namespace Simscop.Pl.Ui;
@@ -29,41 +34,10 @@ public partial class LineChart : UserControl
     {
         InitializeComponent();
 
-        var line = new LineSeries()
-        {
-            Title = "line1",
-            Tag = "tag",
-            CanTrackerInterpolatePoints = true,
-            MarkerType = MarkerType.None,
-            MarkerSize = 2,
-        };
-        for (var i = 0; i < 100; i++)
-            line.Points.Add(new DataPoint(i * 0.1, Math.Cos(i * 0.1) * 10));
-
-        //line.LineLegendPosition = LineLegendPosition.Start;
-        //line.LabelFormatString = "start";
-        line.TrackerFormatString = "x: {2:0.########}\ny: {4:0.########}";
-        line.Decimator = Decimator.Decimate;
-
-        PlotModel.Series.Add(line);
-
-        line.MouseDown += (s, e) =>
-        {
-            //Debug.WriteLine(line.GetNearestPoint(e.Position, true).DataPoint);
-        };
-
-        this.MouseDown += (s, e) =>
-        {
-            var pos = e.GetPosition(this);
-            Debug.WriteLine(line.GetNearestPoint(new ScreenPoint(pos.X, pos.Y), true).DataPoint);
-
-        };
-
-
-
-        //var legend1 = new Legend();
-        //legend1.LegendSymbolLength = 24;
-        //PlotModel.Legends.Add(legend1);
+        var controller = new PlotController();
+        controller.Unbind(PlotCommands.SnapTrack);
+        controller.Unbind(PlotCommands.SnapTrackTouch);
+        View.Controller = controller;
 
         BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
     }
@@ -92,32 +66,32 @@ public partial class LineChart : UserControl
     {
         if ((Panel.GridStyle & GridStyle.Vertical) == GridStyle.Vertical)
         {
-            XAxis.MajorGridlineStyle = LineStyle.Solid;
-            XAxis.MinorGridlineStyle = LineStyle.Dot;
+            AxisX.MajorGridlineStyle = LineStyle.Solid;
+            AxisX.MinorGridlineStyle = LineStyle.Dot;
         }
         else
         {
-            XAxis.MajorGridlineStyle = LineStyle.None;
-            XAxis.MinorGridlineStyle = LineStyle.None;
+            AxisX.MajorGridlineStyle = LineStyle.None;
+            AxisX.MinorGridlineStyle = LineStyle.None;
         }
 
         if ((Panel.GridStyle & GridStyle.Horizontal) == GridStyle.Horizontal)
         {
-            YAxis.MajorGridlineStyle = LineStyle.Solid;
-            YAxis.MinorGridlineStyle = LineStyle.Dot;
+            AxisY.MajorGridlineStyle = LineStyle.Solid;
+            AxisY.MinorGridlineStyle = LineStyle.Dot;
         }
         else
         {
-            YAxis.MajorGridlineStyle = LineStyle.None;
-            YAxis.MinorGridlineStyle = LineStyle.None;
+            AxisY.MajorGridlineStyle = LineStyle.None;
+            AxisY.MinorGridlineStyle = LineStyle.None;
         }
     }
 
     void UpdateAxis()
     {
         PlotModel.Axes.Clear();
-        PlotModel.Axes.Add(XAxis);
-        PlotModel.Axes.Add(YAxis);
+        PlotModel.Axes.Add(AxisX);
+        PlotModel.Axes.Add(AxisY);
 
         UpdatePanelGrid();
         UpdateBindingPlotModel();
@@ -127,12 +101,12 @@ public partial class LineChart : UserControl
     /// <summary>
     /// 
     /// </summary>
-    public PlotModel PlotModel { get; } = new() { };
+    public PlotModel PlotModel { get; } = new();
 
     /// <summary>
     /// 
     /// </summary>
-    protected LinearAxis XAxis { get; set; } = new()
+    protected LinearAxis AxisX { get; set; } = new()
     {
         Position = AxisPosition.Bottom
     };
@@ -140,7 +114,7 @@ public partial class LineChart : UserControl
     /// <summary>
     /// 
     /// </summary>
-    protected LinearAxis YAxis { get; set; } = new()
+    protected LinearAxis AxisY { get; set; } = new()
     {
         Position = AxisPosition.Left
     };
@@ -163,7 +137,7 @@ public partial class LineChart : UserControl
 
     private void OnXAxisChanged()
     {
-        XAxis = new LinearAxis
+        AxisX = new LinearAxis
         {
             Position = AxisPosition.Bottom,
             Title = XAxisModel.Title,
@@ -205,7 +179,7 @@ public partial class LineChart : UserControl
 
     private void OnYAxisChanged()
     {
-        YAxis = new LinearAxis()
+        AxisY = new LinearAxis()
         {
             Position = AxisPosition.Left,
             Title = YAxisModel.Title,
@@ -218,7 +192,7 @@ public partial class LineChart : UserControl
             AbsoluteMaximum = YAxisModel.ViewMaximum
         };
 
-        //YAxis.MaximumRange=20;
+        //AxisY.MaximumRange=20;
 
 
         UpdateAxis();
@@ -259,10 +233,10 @@ public partial class LineChart : UserControl
             ? new OxyThickness(8)
             : new OxyThickness(Panel.Padding.V1, Panel.Padding.V2, Panel.Padding.V3, Panel.Padding.V4);
 
-        XAxis.MinimumPadding = Panel.AxisMarginScale.V1;
-        XAxis.MaximumPadding = Panel.AxisMarginScale.V3;
-        YAxis.MaximumPadding = Panel.AxisMarginScale.V2;
-        YAxis.MinimumPadding = Panel.AxisMarginScale.V4;
+        AxisX.MinimumPadding = Panel.AxisMarginScale.V1;
+        AxisX.MaximumPadding = Panel.AxisMarginScale.V3;
+        AxisY.MaximumPadding = Panel.AxisMarginScale.V2;
+        AxisY.MinimumPadding = Panel.AxisMarginScale.V4;
 
         PlotModel.Title = Panel.Title;
         PlotModel.Subtitle = Panel.Subtitle;
@@ -279,6 +253,65 @@ public partial class LineChart : UserControl
 
     #endregion
 
+    #region Annotation
+
+    private readonly List<Annotation> _annotations = new();
+
+    private LineAnnotation _realLineAnnotation = new();
+
+    public static readonly DependencyProperty AnnotationProperty = DependencyProperty.Register(
+        nameof(Annotation), typeof(AnnotationModel), typeof(LineChart), new PropertyMetadata(new AnnotationModel(), OnAnnotationChanged));
+
+    private static void OnAnnotationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not LineChart lineChart) return;
+
+
+        if (e.OldValue is AnnotationModel mo)
+            mo.OnValueChanged -= lineChart.OnAnnotationChanged;
+        if (e.NewValue is AnnotationModel mn)
+            mn.OnValueChanged += lineChart.OnAnnotationChanged;
+    }
+
+    private void OnAnnotationChanged()
+    {
+        _annotations.ForEach(item =>
+        {
+            switch (item)
+            {
+                case TextAnnotationExt ta:
+                    ta.FontSize = Annotation.FontSize;
+                    ta.FontWeight = Annotation.FontWeight;
+                    ta.FormatString = Annotation.Format;
+                    ta.TextColor = Annotation.TextColor.ToOxyColor();
+                    ta.StrokeThickness = 0;
+                    ta.Update();
+                    break;
+                case LineAnnotation la:
+                    la.StrokeThickness = Annotation.Thickness;
+                    la.LineStyle = (LineStyle)Annotation.LineSytle;
+                    la.Color = Annotation.LineColor.ToOxyColor();
+                    break;
+                case PointAnnotation pa:
+                    pa.Fill = Annotation.PointColor.ToOxyColor();
+                    pa.Size = Annotation.PointSize;
+                    break;
+                default:
+                    return;
+            }
+        });
+
+        UpdateAxis();
+    }
+
+    public AnnotationModel Annotation
+    {
+        get => (AnnotationModel)GetValue(AnnotationProperty);
+        set => SetValue(AnnotationProperty, value);
+    }
+
+    #endregion
+
     #region toolkits
 
     bool TransformFromPoint(MouseEventArgs e, out Point coordinate) => TransformFromPoint(e.GetPosition(this), out coordinate);
@@ -290,56 +323,207 @@ public partial class LineChart : UserControl
         var aera = PlotModel.PlotArea;
         if (!aera.Contains(point.X, point.Y)) return false;
 
-        var xRange = XAxis.ActualMaximum - XAxis.ActualMinimum;
-        var yRange = YAxis.ActualMaximum - YAxis.ActualMinimum;
+        var xRange = AxisX.ActualMaximum - AxisX.ActualMinimum;
+        var yRange = AxisY.ActualMaximum - AxisY.ActualMinimum;
 
-        var x = XAxis.ActualMinimum + xRange * (point.X - aera.Left) / aera.Width;
-        var y = YAxis.ActualMinimum + yRange * (aera.Height - (point.Y - aera.Top)) / aera.Height;
+        var x = AxisX.ActualMinimum + xRange * (point.X - aera.Left) / aera.Width;
+        var y = AxisY.ActualMinimum + yRange * (aera.Height - (point.Y - aera.Top)) / aera.Height;
 
 
         coordinate = new Point(x, y);
         return true;
     }
 
-    #endregion
-
-    protected override void OnMouseMove(MouseEventArgs e)
+    /// <summary>
+    /// 实际的左边长度对应的控件的像素长度
+    /// </summary>
+    /// <param name="coordinate"></param>
+    /// <returns></returns>
+    double Pixel2XCoordinate(double coordinate)
     {
-        base.OnMouseMove(e);
+        var xRange = AxisX.ActualMaximum - AxisX.ActualMinimum;
+        var aera = PlotModel.PlotArea;
 
-        //Debug.WriteLine(e.GetPosition(this));
-
-        //if (!TransformFromPoint(e, out var coordinate)) return;
-
-        //var line = PlotModel.Series[0];
-        //Debug.WriteLine(line.GetNearestPoint(new ScreenPoint(e.GetPosition(this).X, e.GetPosition(this).Y), true));
-
-
+        var scale = xRange / aera.Width;
+        return coordinate * scale;
     }
 
 
-    protected override void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
+    double Pixel2YCoordinate(double coordinate)
     {
-        if (e.ChangedButton == MouseButton.Left && TransformFromPoint(e, out var point))
+        var aera = PlotModel.PlotArea;
+        var yRange = AxisY.ActualMaximum - AxisY.ActualMinimum;
+
+        var scale = yRange / aera.Width;
+        return coordinate * scale;
+    }
+    #endregion
+
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+        base.OnRenderSizeChanged(sizeInfo);
+
+        PlotModel.Annotations.ForEach(item =>
         {
+            if (item is not TextAnnotationExt ta) return;
 
-            PlotModel.Annotations.Clear();
-            PlotModel.Annotations.Add(new TextAnnotation()
+            ta.Update();
+        });
+        UpdateAxis();
+    }
+
+    void RemoveUselessAnnotations()
+    {
+        PlotModel.Annotations.Clear();
+        _annotations.ForEach(item => PlotModel.Annotations.Add(item));
+    }
+
+    protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnPreviewMouseLeftButtonUp(e);
+
+        RemoveUselessAnnotations();
+        UpdateAxis();
+    }
+
+    protected override void OnPreviewMouseMove(MouseEventArgs e)
+    {
+        //base.OnPreviewMouseMove(e);
+
+        var pos = e.GetPosition(this);
+
+        var area = PlotModel.PlotArea;
+
+        if (e.LeftButton == MouseButtonState.Pressed && area.Contains(pos.X, pos.Y))
+        {
+            //return;
+            TransformFromPoint(e, out var coor);
+            RemoveUselessAnnotations();
+            PlotModel.Series.ForEach(item =>
             {
-                Text = $"{point.X:##.###} - {point.Y::##.###}",
-                TextPosition = new DataPoint(point.X, point.Y),
-            });
-            PlotModel.Annotations.Add(new LineAnnotation()
-            {
-                X = point.X,
-                Type = LineAnnotationType.Vertical,
-                MinimumY = YAxis.ActualMinimum,
-                StrokeThickness = 2,
-                MaximumY = point.Y,
+                if (item is not FunctionSeries series || string.IsNullOrWhiteSpace(series.TrackerFormatString)) return;
+
+
+                var closeY = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
+                var close = item.GetNearestPoint(new ScreenPoint(e.GetPosition(this).X, AxisY.Transform(closeY)), true)
+                    .DataPoint;
+
+                PlotModel.Annotations.Add(new LineAnnotation()
+                {
+                    X = coor.X,
+                    Type = LineAnnotationType.Vertical,
+                    Color = OxyColors.Black,
+                    StrokeThickness = 1,
+                    LineStyle = LineStyle.Dot
+                });
+
+                PlotModel.Annotations.Add(new LineAnnotation()
+                {
+                    Y = close.Y,
+                    Type = LineAnnotationType.Horizontal,
+                    Color = OxyColors.Black,
+                    StrokeThickness = 1,
+                    LineStyle = LineStyle.Dot
+                });
+
+                var annotation = new TextAnnotationExt()
+                {
+                    Transform = Pixel2XCoordinate,
+                    TargetX = close.X,
+                    TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
+                    TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
+                    TargetY = close.Y,
+                    Text = series.TrackerFormatString.Format(series.Title, AxisX.Title, close.X, AxisY.Title, close.Y),
+                    StrokeThickness = 0,
+                    TextColor = OxyColors.Black,
+                    FontSize = 14,
+                    FontWeight = 500,
+                };
+                annotation.Update();
+                PlotModel.Annotations.Add(annotation);
             });
 
-            Debug.WriteLine("ok");
             UpdateAxis();
         }
+
+        e.Handled = false;
+    }
+
+    protected override void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
+    {
+        var line = new LineSeries();
+
+        if (!(e.ChangedButton == MouseButton.Left && TransformFromPoint(e, out var point)))
+        {
+            e.Handled = true;
+            return;
+        }
+
+        _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
+
+        // 仅允许一个x的annotation
+        _annotations.Clear();
+        PlotModel.Series.ForEach(item =>
+        {
+            if (item is not FunctionSeries series) return;
+
+            var y = series.Points.OrderBy(p => Math.Abs(p.X - point.X)).FirstOrDefault().Y;
+            var select = item.GetNearestPoint(new ScreenPoint(e.GetPosition(this).X, AxisY.Transform(y)), true).DataPoint;
+
+            var text = new TextAnnotationExt()
+            {
+                TargetX = select.X,
+                TargetY = select.Y,
+                SerialTitle = series.Title,
+                TitleX = AxisX.Title,
+                TitleY = AxisY.Title,
+                FormatString = Annotation.Format,
+                Transform = Pixel2XCoordinate,
+
+                TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
+                TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
+            };
+            text.Update();
+            PlotModel.Annotations.Add(text);
+            _annotations.Add(text);
+
+            if (_realLineAnnotation.MaximumY.IsNaN()
+                || _realLineAnnotation.MaximumY < select.Y)
+            {
+                var line = new LineAnnotation()
+                {
+                    X = point.X,
+                    Type = LineAnnotationType.Vertical,
+                    StrokeThickness = 2,
+                    MaximumY = select.Y,
+                    LineStyle = LineStyle.Automatic,
+                    Color = OxyColors.Red,
+                };
+
+                PlotModel.Annotations.Add(line);
+                _annotations.Add(line);
+
+                if (!_realLineAnnotation.MaximumY.IsNaN())
+                {
+                    PlotModel.Annotations.Remove(_realLineAnnotation);
+                    _annotations.Remove(_realLineAnnotation);
+                }
+
+                _realLineAnnotation = line;
+            }
+
+            var dot = new PointAnnotation()
+            {
+                X = select.X,
+                Y = select.Y,
+                Fill = OxyColors.Red,
+            };
+
+            PlotModel.Annotations.Add(dot);
+            _annotations.Add(dot);
+        });
+
+
+        OnAnnotationChanged();
     }
 }
