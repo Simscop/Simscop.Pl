@@ -18,22 +18,51 @@ public interface ICameraService : IDeviceService
     public bool Capture(out Mat? img);
 
     /// <summary>
+    /// 曝光范围
+    /// </summary>
+    public (double Min, double Max) ExposureRange { get; }
+
+    /// <summary>
     /// 曝光，单位ms
     /// </summary>
     public double Exposure { get; set; }
 
     /// <summary>
+    /// 色温范围
+    /// </summary>
+    public (double Min, double Max) TemperatureRange { get; }
+
+
+    /// <summary>
+    /// 色温
+    /// </summary>
+    public double Temperature { get; set; }
+
+    /// <summary>
+    /// 色调范围
+    /// </summary>
+    public (double Min, double Max) TintRange { get; }
+
+    /// <summary>
+    /// 色调
+    /// </summary>
+    public double Tint { get; set; }
+
+    /// <summary>
     /// 图像Gamma值，默认为1
+    /// -1 - 1
     /// </summary>
     public double Gamma { get; set; }
 
     /// <summary>
     /// 图像对比度，默认为0
+    /// -1 - 1
     /// </summary>
     public double Contrast { get; set; }
 
     /// <summary>
     /// 图像亮度，默认为0
+    /// -1 - 1
     /// </summary>
     public double Brightness { get; set; }
 
@@ -50,12 +79,12 @@ public interface ICameraService : IDeviceService
     /// <summary>
     /// 是否自动曝光
     /// </summary>
-    public double IsAutoExposure { get; set; }
+    public bool IsAutoExposure { get; set; }
 
     /// <summary>
     /// 相机当前帧率
     /// </summary>
-    public double Frame { get; set; }
+    public double Frame { get; }
 
     /// <summary>
     /// 顺时针旋转角度
@@ -86,17 +115,17 @@ public interface ICameraService : IDeviceService
     /// <summary>
     /// 采集图像的分辨率
     /// </summary>
-    public Size ImageSize { get; set; }
+    public Size ImageSize { get; }
 
     /// <summary>
     /// 当前模式色阶上下限
     /// </summary>
-    public LevelRange LevelRange { get; set; }
+    public (double Left, double Right) LevelRange { get; }
 
     /// <summary>
     /// 当前实际左右色阶
     /// </summary>
-    public LevelRange CurrentLevel { get; set; }
+    public (double Left, double Right) CurrentLevel { get; set; }
 
     /// <summary>
     /// 存取图片
@@ -104,4 +133,14 @@ public interface ICameraService : IDeviceService
     /// <param name="path"></param>
     /// <returns></returns>
     public bool SaveImage(string path);
+
+    /// <summary>
+    /// 当前分辨率
+    /// </summary>
+    public (uint Width, uint Height) Resolution { get; set; }
+
+    /// <summary>
+    /// 支持的分辨率种类
+    /// </summary>
+    public List<(uint Width, uint Height)> Resolutions { get; set; }
 }
