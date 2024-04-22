@@ -27,7 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Spectrometer", "..\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{2A396659-B485-460E-A937-DA6AAD39BAB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fake.Hardware", "..\test\Fake.Hardware\Fake.Hardware.csproj", "{C8750EF4-94C4-4C23-8496-4CD35FDFF909}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fake.Hardware", "..\test\Fake.Hardware\Fake.Hardware.csproj", "{C8750EF4-94C4-4C23-8496-4CD35FDFF909}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simscop.Pl.WPF", "Simscop.Pl.WPF\Simscop.Pl.WPF.csproj", "{D7380C78-F81F-491F-91A5-369C996DF160}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,8 +57,8 @@ Global
 		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Debug|Any CPU.Build.0 = Debug|x86
 		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91BA7F5A-662D-4CA3-9D08-D3B484B00894}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.Build.0 = Debug|x86
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8F9AE3F-B233-4F81-8405-8F97C85F1B8B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEA891BF-4AA6-4BF1-B278-F18103537662}.Debug|Any CPU.ActiveCfg = Debug|x86
@@ -67,10 +69,14 @@ Global
 		{EAFCA08A-F6C1-45D1-B402-FCABF836BC15}.Debug|Any CPU.Build.0 = Debug|x86
 		{EAFCA08A-F6C1-45D1-B402-FCABF836BC15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFCA08A-F6C1-45D1-B402-FCABF836BC15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Debug|Any CPU.Build.0 = Debug|x86
 		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8750EF4-94C4-4C23-8496-4CD35FDFF909}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7380C78-F81F-491F-91A5-369C996DF160}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D7380C78-F81F-491F-91A5-369C996DF160}.Debug|Any CPU.Build.0 = Debug|x86
+		{D7380C78-F81F-491F-91A5-369C996DF160}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7380C78-F81F-491F-91A5-369C996DF160}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,19 @@
+﻿<liftui:Window
+    x:Class="Simscop.Pl.WPF.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    SystemBackdropType="Mica"
+    Topmost="True"
+    mc:Ignorable="d">
+    <Grid>
+        <ui:HeatmapChart />
+    </Grid>
+</liftui:Window>
