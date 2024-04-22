@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>		
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Zaber.Motion" Version="5.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Zaber.Motion" Version="5.2.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="NETOmniDriver-NET40">
-      <HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETOmniDriver-NET40.dll</HintPath>
-    </Reference>
-    <Reference Include="NETSpam-NET40">
-      <HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETSpam-NET40.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="NETOmniDriver-NET40">
+			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETOmniDriver-NET40.dll</HintPath>
+		</Reference>
+		<Reference Include="NETSpam-NET40">
+			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETSpam-NET40.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>
