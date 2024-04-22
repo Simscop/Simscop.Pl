@@ -1,20 +1,14 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup.Localizer;
 using System.Windows.Media;
-using HarfBuzzSharp;
+using System.Windows.Threading;
 using Lift.UI.Tools.Extension;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
-using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 using Simscop.Pl.Core.Models.Charts;
@@ -30,6 +24,8 @@ namespace Simscop.Pl.Ui;
 /// </summary>
 public partial class LineChart : UserControl
 {
+    private DispatcherTimer _resizeTimer;
+
     public LineChart()
     {
         InitializeComponent();
@@ -40,6 +36,25 @@ public partial class LineChart : UserControl
         View.Controller = controller;
 
         BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
+
+        _resizeTimer = new DispatcherTimer();
+        _resizeTimer.Interval = TimeSpan.FromSeconds(0.5); // 设置延迟执行的时间间隔
+        _resizeTimer.Tick += _resizeTimer_Tick; ;
+
+
+    }
+
+    private void _resizeTimer_Tick(object? sender, EventArgs e)
+    {
+        _resizeTimer.Stop();
+
+        PlotModel.Annotations.ForEach(item =>
+        {
+            if (item is not TextAnnotationExt ta) return;
+
+            ta.Update();
+        });
+        UpdateAxis();
     }
 
     protected override void OnRender(DrawingContext drawingContext)
@@ -68,7 +83,7 @@ public partial class LineChart : UserControl
     /// <param name="index"></param>
     public void ShowSerial(Series series, int index)
     {
-        
+
         if (PlotModel.Series.Count == index)
             PlotModel.Series.Add(series);
 
@@ -389,17 +404,13 @@ public partial class LineChart : UserControl
     }
     #endregion
 
+
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
         base.OnRenderSizeChanged(sizeInfo);
 
-        PlotModel.Annotations.ForEach(item =>
-        {
-            if (item is not TextAnnotationExt ta) return;
-
-            ta.Update();
-        });
-        UpdateAxis();
+        _resizeTimer.Stop();
+        _resizeTimer.Start();
     }
 
     void RemoveUselessAnnotations()
