@@ -83,7 +83,6 @@ public partial class LineChart : UserControl
     /// <param name="index"></param>
     public void ShowSerial(Series series, int index)
     {
-
         if (PlotModel.Series.Count == index)
             PlotModel.Series.Add(series);
 

@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.Spectrometer", "..\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", "{2A396659-B485-460E-A937-DA6AAD39BAB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fake.Hardware", "..\test\Fake.Hardware\Fake.Hardware.csproj", "{C8750EF4-94C4-4C23-8496-4CD35FDFF909}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fake.Hardware", "..\test\Fake.Hardware\Fake.Hardware.csproj", "{C8750EF4-94C4-4C23-8496-4CD35FDFF909}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simscop.Pl.WPF", "Simscop.Pl.WPF\Simscop.Pl.WPF.csproj", "{D7380C78-F81F-491F-91A5-369C996DF160}"
 EndProject
