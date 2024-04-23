@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+    <ProjectReference Include="..\..\src\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
+    <ProjectReference Include="..\..\src\Simscop.Pl.Ui\Simscop.Pl.Ui.csproj" />
+    <ProjectReference Include="..\..\test\Fake.Hardware\Fake.Hardware.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Simscop.Pl.Core.Services;
 
-namespace Simscop.Pl.Core.Services;
+// todo 需要优化一下属性的限定域
 
 public interface IDeviceService
 {
     /// <summary>
     /// 型号
     /// </summary>
-    public string Model { get; set; }
+    public string? Model { get; set; }
 
     /// <summary>
     /// 序列号
     /// </summary>
-    public string SerialNumber { get; set; }
+    public string? SerialNumber { get; set; }
 
     /// <summary>
     /// 固件版本
     /// </summary>
-    public string Fireware { get; set; }
+    public string? Fireware { get; set; }
 
     /// <summary>
     /// 硬件型号
     /// </summary>
-    public string HardwareVersion { get; set; }
+    public string? HardwareVersion { get; set; }
 
     /// <summary>
     /// 保留配置

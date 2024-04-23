@@ -1,0 +1,43 @@
+﻿<liftui:Window
+    x:Class="Example.Spectrometer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:charts="clr-namespace:Simscop.Pl.Core.Models.Charts;assembly=Simscop.Pl.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Example.Spectrometer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    SystemBackdropType="Tabbed"
+    Topmost="True"
+    mc:Ignorable="d">
+    <Grid>
+        <ui:LineChart x:Name="LineChart">
+            <ui:LineChart.XAxisModel>
+                <charts:AxisModel
+                    IsPanning="False"
+                    IsZoom="False"
+                    ViewMaximum="105"
+                    ViewMinimum="-1" />
+            </ui:LineChart.XAxisModel>
+            <ui:LineChart.YAxisModel>
+                <charts:AxisModel
+                    IsPanning="False"
+                    IsZoom="False"
+                    ViewMaximum="20"
+                    ViewMinimum="3" />
+            </ui:LineChart.YAxisModel>
+
+            <ui:LineChart.Panel>
+                <charts:PanelModel GridStyle="All" />
+            </ui:LineChart.Panel>
+
+        </ui:LineChart>
+
+    </Grid>
+
+
+</liftui:Window>

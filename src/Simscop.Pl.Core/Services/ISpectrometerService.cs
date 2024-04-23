@@ -1,53 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Simscop.Pl.Core.Services;
 
-namespace Simscop.Pl.Core.Services;
+// todo 默认不考虑多通道的情况，如果有再修订
 
 public interface ISpectrometerService : IDeviceService
 {
     /// <summary>
     /// 设备的编号
     /// </summary>
-    public int Index { get; internal set; }
-
-    /// <summary>
-    /// 通道
-    /// </summary>
-    public int Channel { get; set; }
+    public int Index { get; set; }
 
     /// <summary>
     /// 滑动窗口宽度
     /// </summary>
     public int BoxcarWidth { get; set; }
 
-    public int IntegrationStepIncrement { get; set; }
+    /// <summary>
+    /// int the integration step size in microseconds
+    /// </summary>
+    public int IntegrationStepIncrement { get; }
 
+    /// <summary>
+    /// 积分时间，单位microseconds(μs)
+    /// </summary>
     public int IntegrationTime { get; set; }
 
-    public int MaximumIntegrationTime { get; set; }
+    /// <summary>
+    /// 最小积分时间，单位microseconds(μs)
+    /// </summary>
+    public int MinimumIntegrationTime { get; }
 
-    public int MaximumIntensity { get; set; }
+    /// <summary>
+    /// 最大积分时间，单位microseconds(μs)
+    /// </summary>
+    public int MaximumIntegrationTime { get; }
 
-    public int MinimumIntegrationTime { get; set; }
+    /// <summary>
+    /// CCD 像素的最大可能值
+    /// </summary>
+    public int MaximumIntensity { get; }
 
-    public int NumberOfDarkPixel { get; set; }
+    /// <summary>
+    /// 暗像素数
+    /// </summary>
+    public int NumberOfDarkPixel { get; }
 
-    public int NumberOfPixels { get; set; }
+    /// <summary>
+    /// 像素数
+    /// </summary>
+    public int NumberOfPixels { get; }
 
+    /// <summary>
+    /// 平均结果
+    /// </summary>
     public int ScansToAverage { get; set; }
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="pixel"></param>
+    /// <param name="channel"></param>
     /// <returns></returns>
-    public double GetWaveLength(int pixel);
+    public double GetWaveLength(int pixel, int channel = 0);
+
+    /// <summary>
+    /// 单位nm
+    /// </summary>
+    /// <returns></returns>
+    public double[] GetWavelengths();
 
     /// <summary>
     /// Acquire the next spectrum from the spectrometer.
+    /// 单位是a.u.
     /// </summary>
     /// <returns></returns>
     public double[] GetSpectrum();

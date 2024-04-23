@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Lift.Core" Version="1.0.0.5" />
+    <ProjectReference Include="..\..\src\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
   </ItemGroup>
 
 </Project>

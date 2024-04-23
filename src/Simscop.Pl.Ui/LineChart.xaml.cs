@@ -1,20 +1,14 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup.Localizer;
 using System.Windows.Media;
-using HarfBuzzSharp;
+using System.Windows.Threading;
 using Lift.UI.Tools.Extension;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
-using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
 using Simscop.Pl.Core.Models.Charts;
@@ -30,6 +24,8 @@ namespace Simscop.Pl.Ui;
 /// </summary>
 public partial class LineChart : UserControl
 {
+    private DispatcherTimer _resizeTimer;
+
     public LineChart()
     {
         InitializeComponent();
@@ -40,6 +36,25 @@ public partial class LineChart : UserControl
         View.Controller = controller;
 
         BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
+
+        _resizeTimer = new DispatcherTimer();
+        _resizeTimer.Interval = TimeSpan.FromSeconds(0.5); // 设置延迟执行的时间间隔
+        _resizeTimer.Tick += _resizeTimer_Tick; ;
+
+
+    }
+
+    private void _resizeTimer_Tick(object? sender, EventArgs e)
+    {
+        _resizeTimer.Stop();
+
+        PlotModel.Annotations.ForEach(item =>
+        {
+            if (item is not TextAnnotationExt ta) return;
+
+            ta.Update();
+        });
+        UpdateAxis();
     }
 
     protected override void OnRender(DrawingContext drawingContext)
@@ -55,11 +70,33 @@ public partial class LineChart : UserControl
         OnPanelChanged();
     }
 
-    void UpdateBindingPlotModel()
+    void RefreshPlotModelBinding()
     {
         BindingOperations.ClearBinding(View, PlotViewBase.ModelProperty);
         BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="series"></param>
+    /// <param name="index"></param>
+    public void ShowSerial(Series series, int index)
+    {
+
+        if (PlotModel.Series.Count == index)
+            PlotModel.Series.Add(series);
+
+        if (PlotModel.Series.Count <= index)
+            throw new Exception();
+        else
+            PlotModel.Series[index] = series;
+
+        OnSerialChanged();
+        UpdateAxis();
+    }
+
+
 
 
     void UpdatePanelGrid()
@@ -94,7 +131,7 @@ public partial class LineChart : UserControl
         PlotModel.Axes.Add(AxisY);
 
         UpdatePanelGrid();
-        UpdateBindingPlotModel();
+        RefreshPlotModelBinding();
     }
 
 
@@ -146,8 +183,10 @@ public partial class LineChart : UserControl
             IsZoomEnabled = XAxisModel.IsZoom,
             IsPanEnabled = XAxisModel.IsPanning,
             TickStyle = (TickStyle)XAxisModel.TickStyle,
+            Minimum = XAxisModel.ViewMinimum,
             AbsoluteMinimum = XAxisModel.ViewMinimum,
-            AbsoluteMaximum = XAxisModel.ViewMaximum
+            Maximum = XAxisModel.ViewMaximum,
+            AbsoluteMaximum = XAxisModel.ViewMaximum,
         };
 
 
@@ -188,8 +227,10 @@ public partial class LineChart : UserControl
             IsZoomEnabled = YAxisModel.IsZoom,
             IsPanEnabled = YAxisModel.IsPanning,
             TickStyle = (TickStyle)YAxisModel.TickStyle,
+            Minimum = YAxisModel.ViewMinimum,
             AbsoluteMinimum = YAxisModel.ViewMinimum,
-            AbsoluteMaximum = YAxisModel.ViewMaximum
+            Maximum = YAxisModel.ViewMaximum,
+            AbsoluteMaximum = YAxisModel.ViewMaximum,
         };
 
         //AxisY.MaximumRange=20;
@@ -256,6 +297,10 @@ public partial class LineChart : UserControl
     #region Annotation
 
     private readonly List<Annotation> _annotations = new();
+
+    private Point _annotationPoint = new();
+
+    private int _annotationFlag = 0;
 
     private LineAnnotation _realLineAnnotation = new();
 
@@ -359,17 +404,13 @@ public partial class LineChart : UserControl
     }
     #endregion
 
+
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
         base.OnRenderSizeChanged(sizeInfo);
 
-        PlotModel.Annotations.ForEach(item =>
-        {
-            if (item is not TextAnnotationExt ta) return;
-
-            ta.Update();
-        });
-        UpdateAxis();
+        _resizeTimer.Stop();
+        _resizeTimer.Start();
     }
 
     void RemoveUselessAnnotations()
@@ -401,7 +442,7 @@ public partial class LineChart : UserControl
             RemoveUselessAnnotations();
             PlotModel.Series.ForEach(item =>
             {
-                if (item is not FunctionSeries series || string.IsNullOrWhiteSpace(series.TrackerFormatString)) return;
+                if (item is not LineSeries series || string.IsNullOrWhiteSpace(series.TrackerFormatString)) return;
 
 
                 var closeY = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
@@ -459,16 +500,25 @@ public partial class LineChart : UserControl
             return;
         }
 
-        _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
+        _annotationFlag++;
+        _annotationPoint = e.GetPosition(this);
+
+
+
+        var render = _annotationPoint;
+        var coor = point;
 
         // 仅允许一个x的annotation
+        _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
         _annotations.Clear();
+        PlotModel.Annotations.Clear();
+
         PlotModel.Series.ForEach(item =>
         {
-            if (item is not FunctionSeries series) return;
+            if (item is not LineSeries series) return;
 
-            var y = series.Points.OrderBy(p => Math.Abs(p.X - point.X)).FirstOrDefault().Y;
-            var select = item.GetNearestPoint(new ScreenPoint(e.GetPosition(this).X, AxisY.Transform(y)), true).DataPoint;
+            var y = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
+            var select = item.GetNearestPoint(new ScreenPoint(render.X, AxisY.Transform(y)), true).DataPoint;
 
             var text = new TextAnnotationExt()
             {
@@ -523,7 +573,31 @@ public partial class LineChart : UserControl
             _annotations.Add(dot);
         });
 
-
         OnAnnotationChanged();
+
+
+    }
+
+    void OnRefreshAnnotation()
+    {
+        PlotModel.Series.ForEach(item =>
+        {
+            _annotations.ForEach(annotation =>
+            {
+                if (annotation is TextAnnotationExt tae)
+                {
+                    var x = AxisX.Transform(tae.TargetX);
+                    var y = AxisY.Transform(tae.TargetY);
+                    var tracker = item.GetNearestPoint(new ScreenPoint(x, y), true);
+
+                    if (tracker is null) throw new Exception();
+                }
+            });
+        });
+    }
+
+    private void OnSerialChanged()
+    {
+        //OnRefreshAnnotation();
     }
 }
