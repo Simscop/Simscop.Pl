@@ -27,8 +27,6 @@ namespace Simscop.Pl.Ui
     /// </summary>
     public partial class HeatmapChart : UserControl
     {
-        private readonly DispatcherTimer _timer;
-
         private readonly DispatcherTimer _annotationTimer;
 
         private bool _showAnnotation = false;
@@ -45,17 +43,17 @@ namespace Simscop.Pl.Ui
         /// <summary>
         /// 
         /// </summary>
-        public LinearAxis AxisX { get; set; } = new();
+        public LinearAxis AxisX { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public LinearAxis AxisY { get; set; } = new();
+        public LinearAxis AxisY { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public LinearColorAxis ColorAxis { get; set; } = new();
+        public LinearColorAxis ColorAxis { get; set; }
 
         /// <summary>
         /// 
@@ -76,14 +74,6 @@ namespace Simscop.Pl.Ui
 
             BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
 
-            _timer = new(priority: DispatcherPriority.Send)
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-
-            _timer.Tick += _timer_Tick;
-            _timer.Start();
-
             _annotationTimer = new(priority: DispatcherPriority.Render)
             {
                 Interval = TimeSpan.FromMilliseconds(100),
@@ -93,6 +83,31 @@ namespace Simscop.Pl.Ui
                 _showAnnotation = true;
                 _annotationTimer.Stop();
             };
+
+            AxisX = new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                MinimumPadding = 0,
+                MaximumPadding = 0,
+                IsZoomEnabled = false,
+                IsPanEnabled = false
+            };
+            AxisY = new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                MinimumPadding = 0,
+                MaximumPadding = 0,
+                IsZoomEnabled = false,
+                IsPanEnabled = false
+            };
+            ColorAxis = new LinearColorAxis
+            {
+                Position = AxisPosition.Right,
+                Palette = OxyPalettes.Gray(256),
+                HighColor = OxyColors.White,
+                LowColor = OxyColors.Black
+            };
+            RefreshAxis();
         }
 
         void RefreshPlotModelBinding()
@@ -144,7 +159,33 @@ namespace Simscop.Pl.Ui
         }
 
         public static readonly DependencyProperty PaletteProperty = DependencyProperty.Register(
-            nameof(Palette), typeof(Palette), typeof(HeatmapChart), new PropertyMetadata(default(Palette)));
+            nameof(Palette), typeof(Palette), typeof(HeatmapChart), new PropertyMetadata(Palette.Gray, (s, d) =>
+            {
+                if (s is not HeatmapChart heatmap || d.NewValue is not Palette palette) return;
+
+                heatmap.ColorAxis.Palette = palette switch
+                {
+                    Palette.BlueWhiteRed31 => OxyPalettes.BlueWhiteRed31,
+                    Palette.Hot64 => OxyPalettes.Hot64,
+                    Palette.Hue64 => OxyPalettes.Hue64,
+                    Palette.BlackWhiteRed => OxyPalettes.BlackWhiteRed(256),
+                    Palette.BlueWhiteRed => OxyPalettes.BlueWhiteRed(256),
+                    Palette.Cool => OxyPalettes.Cool(256),
+                    Palette.Gray => OxyPalettes.Gray(256),
+                    Palette.Hot => OxyPalettes.Hot(256),
+                    Palette.Hue => OxyPalettes.Hue(256),
+                    Palette.HueDistinct => OxyPalettes.HueDistinct(256),
+                    Palette.Jet => OxyPalettes.Jet(256),
+                    Palette.Rainbow => OxyPalettes.Rainbow(256),
+                    Palette.Cividis => OxyPalettes.Cividis(),
+                    Palette.Inferno => OxyPalettes.Inferno(),
+                    Palette.Magma => OxyPalettes.Magma(),
+                    Palette.Plasma => OxyPalettes.Plasma(),
+                    Palette.Viridis => OxyPalettes.Viridis(),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                heatmap.RefreshAxis();
+            }));
 
         public Palette Palette
         {
@@ -290,52 +331,6 @@ namespace Simscop.Pl.Ui
             UpdateTextAnnotation();
         }
 
-        private void _timer_Tick(object? sender, EventArgs e)
-        {
-            var index = 9;
 
-            var data = new double[index, index];
-            var random = new Random();
-
-            for (var i = 0; i < index; i++)
-            {
-                for (var j = 0; j < index; j++)
-                {
-                    data[i, j] = random.NextDouble();
-                }
-            }
-
-            AxisX = new LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                MinimumPadding = 0,
-                MaximumPadding = 0,
-                IsZoomEnabled = false,
-                IsPanEnabled = false
-            };
-            AxisY = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                MinimumPadding = 0,
-                MaximumPadding = 0,
-                IsZoomEnabled = false,
-                IsPanEnabled = false
-            };
-            ColorAxis = new LinearColorAxis
-            {
-                Position = AxisPosition.Right,
-                Palette = OxyPalettes.Gray(256),
-                HighColor = OxyColors.White,
-                LowColor = OxyColors.Black
-            };
-            RefreshAxis();
-
-            Cols = index;
-            Rows = index;
-            Data = data;
-
-            RefreshPlotModelBinding();
-
-        }
     }
 }
