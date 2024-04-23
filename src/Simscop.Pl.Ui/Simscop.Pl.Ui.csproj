@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj" />
-    <ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.Wpf\OxyPlot.Wpf.csproj" />
     <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
   </ItemGroup>
 
