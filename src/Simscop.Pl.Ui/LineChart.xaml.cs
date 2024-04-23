@@ -70,7 +70,7 @@ public partial class LineChart : UserControl
         OnPanelChanged();
     }
 
-    void UpdateBindingPlotModel()
+    void RefreshPlotModelBinding()
     {
         BindingOperations.ClearBinding(View, PlotViewBase.ModelProperty);
         BindingOperations.SetBinding(View, PlotViewBase.ModelProperty, new Binding() { Source = PlotModel });
@@ -131,7 +131,7 @@ public partial class LineChart : UserControl
         PlotModel.Axes.Add(AxisY);
 
         UpdatePanelGrid();
-        UpdateBindingPlotModel();
+        RefreshPlotModelBinding();
     }
 
 

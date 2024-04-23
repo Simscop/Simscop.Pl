@@ -8,8 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
     Title="MainWindow"
-    Width="800"
-    Height="450"
+    Width="700"
+    Height="650"
     SystemBackdropType="Mica"
     Topmost="True"
     mc:Ignorable="d">
