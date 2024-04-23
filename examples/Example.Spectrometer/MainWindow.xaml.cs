@@ -58,7 +58,6 @@ public partial class MainWindow
                 try
                 {
                     Application.Current?.Dispatcher.Invoke(() => LineChart.ShowSerial(line, 0));
-                    Application.Current?.Dispatcher.Invoke(() => LineChart.ShowSerial(line2, 1));
                 }
                 catch (Exception e) { }
             }
