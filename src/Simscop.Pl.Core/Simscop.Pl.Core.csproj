@@ -11,5 +11,4 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Lift.Core" Version="1.0.0.5" />
   </ItemGroup>
-
 </Project>

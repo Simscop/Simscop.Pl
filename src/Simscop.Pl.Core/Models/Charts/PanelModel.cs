@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ public partial class PanelModel : ObservableObject
     private Vector4d _padding = new Vector4d(-1);
 
     [ObservableProperty]
-    private Vector4d _axisMarginScale = new Vector4d(0);
+    private Vector4d _axisMarginScale = new Vector4d(-1);
 
     [ObservableProperty]
     private GridStyle _gridStyle = GridStyle.None;

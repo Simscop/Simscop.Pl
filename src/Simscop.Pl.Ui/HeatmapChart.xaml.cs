@@ -1,39 +1,31 @@
-﻿using System.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
 using System.Windows.Threading;
-using Lift.UI.Tools.Extension;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
-using Simscop.Pl.Core.Models.Charts;
 using Simscop.Pl.Core.Models.Charts.Constants;
-using Simscop.Pl.Ui.Charts;
-using Simscop.Pl.Ui.Extensions;
 using PlotCommands = OxyPlot.PlotCommands;
-using TickStyle = OxyPlot.Axes.TickStyle;
 
 namespace Simscop.Pl.Ui
 {
     /// <summary>
     /// Interaction logic for HeatmapChart.xaml
     /// </summary>
-    public partial class HeatmapChart : UserControl
+    public partial class HeatmapChart
     {
         private readonly DispatcherTimer _annotationTimer;
 
-        private bool _showAnnotation = false;
+        private bool _showAnnotation;
 
-        private Point _currentCursor = new();
+        private Point _currentCursor;
 
-        private Point _currentCoor = new();
+        private Point _currentCoor;
 
         /// <summary>
         /// 
@@ -58,7 +50,7 @@ namespace Simscop.Pl.Ui
         /// <summary>
         /// 
         /// </summary>
-        public HeatMapSeries Series { get; set; }
+        public HeatMapSeries? Series { get; set; }
 
         /// <summary>
         /// 
@@ -127,6 +119,8 @@ namespace Simscop.Pl.Ui
 
         void RefreshSeries()
         {
+            if (Series is null) return;
+
             PlotModel.Series.Clear();
             PlotModel.Series.Add(Series);
         }
@@ -185,6 +179,7 @@ namespace Simscop.Pl.Ui
                     _ => throw new ArgumentOutOfRangeException()
                 };
                 heatmap.RefreshAxis();
+                heatmap.RefreshPlotModelBinding();
             }));
 
         public Palette Palette
@@ -264,7 +259,7 @@ namespace Simscop.Pl.Ui
             if (e.LeftButton != MouseButtonState.Pressed
                 || !area.Contains(pos.X, pos.Y)) return;
 
-            if (Series.Data.Length == 0) return;
+            if (Series is null || Series.Data.Length == 0) return;
 
             var x = AxisX.InverseTransform(pos.X);
             var y = AxisY.InverseTransform(pos.Y);
@@ -277,7 +272,7 @@ namespace Simscop.Pl.Ui
 
         void UpdateTextAnnotation()
         {
-            if (!_showAnnotation || Series.Data is null) return;
+            if (!_showAnnotation || Series?.Data is null) return;
 
             var pos = _currentCursor;
 
@@ -320,6 +315,7 @@ namespace Simscop.Pl.Ui
             if (e.LeftButton != MouseButtonState.Pressed
                 || !area.Contains(pos.X, pos.Y)) return;
 
+            if (Series is null) return;
             if (Series.Data.Length == 0) return;
 
             var x = AxisX.InverseTransform(pos.X);

@@ -1,0 +1,93 @@
+﻿<UserControl
+    x:Class="Simscop.Pl.WPF.UserControls.PanelView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:attach="clr-namespace:Simscop.Pl.WPF.Attach"
+    xmlns:charts="clr-namespace:Simscop.Pl.Core.Models.Charts;assembly=Simscop.Pl.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance charts:PanelModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="20,5" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel
+                                Margin="0,8,6,8"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Orientation="Horizontal">
+                                <ContentPresenter
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentSource="Header"
+                                    RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    TextElement.Foreground="{TemplateBinding Foreground}" />
+                            </StackPanel>
+                            <ContentPresenter
+                                x:Name="Presenter"
+                                Grid.Column="1"
+                                Margin="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel x:Name="Main">
+        <GroupBox Header="Title">
+            <TextBox Text="{Binding Title}" />
+        </GroupBox>
+
+        <GroupBox Header="SubTitle">
+            <TextBox Text="{Binding Subtitle}" />
+        </GroupBox>
+
+        <GroupBox Header="TitlePadding">
+            <liftui:NumericUpDown Minimum="0" Value="{Binding TitlePadding}" />
+        </GroupBox>
+
+        <GroupBox Header="Title">
+            <ComboBox attach:EnumAttach.EnumValuesToItemsSource="True" SelectedItem="{Binding GridStyle}" />
+        </GroupBox>
+
+        <GroupBox Header="Margin">
+            <local:Vector4dView
+                Increment="5"
+                Min="-1"
+                Vector="{Binding Margin, Mode=TwoWay}" />
+        </GroupBox>
+
+        <!--<GroupBox Header="Padding">
+            <local:Vector4dView Vector="{Binding Padding, Mode=TwoWay}" />
+        </GroupBox>-->
+
+        <GroupBox Header="AxisMargin">
+            <local:Vector4dView
+                Increment="0.05"
+                Max="1"
+                Min="0"
+                Vector="{Binding AxisMarginScale, Mode=TwoWay}" />
+        </GroupBox>
+    </StackPanel>
+
+</UserControl>

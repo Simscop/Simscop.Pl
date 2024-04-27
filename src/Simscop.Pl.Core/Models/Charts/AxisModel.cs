@@ -24,7 +24,7 @@ public partial class AxisModel : ObservableObject
     }
 
     [ObservableProperty]
-    private string? _title;
+    private string? _title = "axis";
 
     [ObservableProperty]
     private string? _unit;
@@ -33,13 +33,13 @@ public partial class AxisModel : ObservableObject
     private bool _isVisible = true;
 
     [ObservableProperty]
-    private bool _isZoom = true;
+    private bool _isZoom;
 
     [ObservableProperty]
-    private bool _isPanning = true;
+    private bool _isPanning;
 
     [ObservableProperty]
-    private TickStyle _tickStyle = TickStyle.None;
+    private TickStyle _tickStyle = TickStyle.Outside;
 
     [ObservableProperty]
     private double _viewMinimum = double.MinValue;

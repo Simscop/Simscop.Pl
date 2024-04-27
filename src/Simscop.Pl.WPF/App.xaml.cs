@@ -2,6 +2,7 @@
 using System.Data;
 using System.Windows;
 using System.Windows.Media;
+using Simscop.Pl.WPF.Views;
 
 namespace Simscop.Pl.WPF;
 
@@ -14,10 +15,13 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        var window = new MainWindow()
+        // todo 添加硬件初始化的功能
+
+        var main = new DemoWindow()
         {
             Background = Brushes.White,
+
         };
-        window.Show();
+        main.Show();
     }
 }

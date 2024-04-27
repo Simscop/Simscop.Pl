@@ -1,0 +1,39 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:imageEx="clr-namespace:Simscop.Pl.Ui.ImageEx">
+    <Style TargetType="imageEx:ImageEx">
+        <Setter Property="Background" Value="Black" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="imageEx:ImageEx">
+
+                    <ScrollViewer
+                        x:Name="PART_SCROLL"
+                        HorizontalScrollBarVisibility="Hidden"
+                        IsEnabled="True"
+                        VerticalScrollBarVisibility="Hidden">
+                        <imageEx:SimplePanel x:Name="PART_MAIN_PANEL" Background="{TemplateBinding Background}">
+                            <Viewbox
+                                x:Name="PART_BOX"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform">
+
+                                <imageEx:SimplePanel ClipToBounds="True">
+                                    <Image
+                                        Name="PART_ImageMain"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                        RenderTransformOrigin="0.5,0.5"
+                                        Source="{TemplateBinding ImageSource}" />
+                                </imageEx:SimplePanel>
+                            </Viewbox>
+                        </imageEx:SimplePanel>
+                    </ScrollViewer>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

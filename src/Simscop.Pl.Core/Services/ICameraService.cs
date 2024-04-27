@@ -74,7 +74,7 @@ public interface ICameraService : IDeviceService
     /// <summary>
     /// 是否自动色阶
     /// </summary>
-    public double IsAutoLevel { get; set; }
+    public bool IsAutoLevel { get; set; }
 
     /// <summary>
     /// 是否自动曝光

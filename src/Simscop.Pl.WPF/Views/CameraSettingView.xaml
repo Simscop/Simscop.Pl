@@ -1,0 +1,18 @@
+﻿<liftui:Window
+    x:Class="Simscop.Pl.WPF.Views.CameraSettingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:propertyGrid="clr-namespace:Lift.UI.V2.Controls.PropertyGrid;assembly=Lift.UI"
+    xmlns:viewModels="clr-namespace:Simscop.Pl.WPF.ViewModels"
+    Title="CameraSettingView"
+    Width="800"
+    Height="450"
+    d:DataContext="{d:DesignInstance viewModels:CameraViewModel}"
+    SystemBackdropType="Mica"
+    mc:Ignorable="d">
+    <propertyGrid:PropertyGrid SelectedObject="{Binding}" />
+</liftui:Window>

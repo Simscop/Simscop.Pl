@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Lift.UI" Version="1.0.0.5" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj" />
-    <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\08 lift\ui\src\Lift.UI\Lift.UI.csproj" />
+		<ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj" />
+		<ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+	</ItemGroup>
 
 </Project>

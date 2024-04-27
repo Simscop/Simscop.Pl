@@ -225,7 +225,7 @@ public class ToupTek : ICameraService
 
     public int Gain { get; set; }
 
-    public double IsAutoLevel { get; set; }
+    public bool IsAutoLevel { get; set; }
 
     public bool IsAutoExposure
     {

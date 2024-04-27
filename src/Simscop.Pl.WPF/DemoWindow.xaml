@@ -1,0 +1,19 @@
+﻿<Window
+    x:Class="Simscop.Pl.WPF.DemoWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:imageEx="clr-namespace:Simscop.Pl.Ui.ImageEx;assembly=Simscop.Pl.Ui"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="clr-namespace:Simscop.Pl.WPF.UserControls"
+    xmlns:views="clr-namespace:Simscop.Pl.WPF.Views"
+    Title="DemoWindow"
+    Width="800"
+    Height="450"
+    Topmost="True"
+    mc:Ignorable="d">
+    <Grid>
+        <imageEx:ImageEx x:Name="Image" />
+    </Grid>
+</Window>

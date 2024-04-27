@@ -40,8 +40,6 @@ public partial class LineChart : UserControl
         _resizeTimer = new DispatcherTimer();
         _resizeTimer.Interval = TimeSpan.FromSeconds(0.5); // 设置延迟执行的时间间隔
         _resizeTimer.Tick += _resizeTimer_Tick; ;
-
-
     }
 
     private void _resizeTimer_Tick(object? sender, EventArgs e)
@@ -64,7 +62,6 @@ public partial class LineChart : UserControl
         // axis
         OnXAxisChanged();
         OnYAxisChanged();
-        UpdateAxis();
 
         // panel
         OnPanelChanged();
@@ -94,9 +91,6 @@ public partial class LineChart : UserControl
         OnSerialChanged();
         UpdateAxis();
     }
-
-
-
 
     void UpdatePanelGrid()
     {
@@ -144,7 +138,11 @@ public partial class LineChart : UserControl
     /// </summary>
     protected LinearAxis AxisX { get; set; } = new()
     {
-        Position = AxisPosition.Bottom
+        Position = AxisPosition.Bottom,
+        MinimumPadding = 0,
+        MaximumPadding = 0,
+        IsZoomEnabled = false,
+        IsPanEnabled = false
     };
 
     /// <summary>
@@ -152,14 +150,26 @@ public partial class LineChart : UserControl
     /// </summary>
     protected LinearAxis AxisY { get; set; } = new()
     {
-        Position = AxisPosition.Left
+        Position = AxisPosition.Left,
+        MinimumPadding = 0,
+        MaximumPadding = 0,
+        IsZoomEnabled = false,
+        IsPanEnabled = false
     };
 
+    public static readonly DependencyProperty SelectedProperty = DependencyProperty.Register(
+        nameof(Selected), typeof(double), typeof(LineChart), new PropertyMetadata(default(double)));
+
+    public double Selected
+    {
+        get => (double)GetValue(SelectedProperty);
+        set => SetValue(SelectedProperty, value);
+    }
 
     #region XAxis
 
     public static readonly DependencyProperty XAxisModelProperty = DependencyProperty.Register(
-        nameof(XAxisModel), typeof(AxisModel), typeof(LineChart), new PropertyMetadata(new AxisModel(), OnXAxisChanged));
+        nameof(XAxisModel), typeof(AxisModel), typeof(LineChart), new PropertyMetadata(new AxisModel() { }, OnXAxisChanged));
 
     private static void OnXAxisChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -182,10 +192,10 @@ public partial class LineChart : UserControl
             IsZoomEnabled = XAxisModel.IsZoom,
             IsPanEnabled = XAxisModel.IsPanning,
             TickStyle = (TickStyle)XAxisModel.TickStyle,
-            Minimum = XAxisModel.ViewMinimum,
-            AbsoluteMinimum = XAxisModel.ViewMinimum,
-            Maximum = XAxisModel.ViewMaximum,
-            AbsoluteMaximum = XAxisModel.ViewMaximum,
+            //Minimum = XAxisModel.ViewMinimum,
+            //AbsoluteMinimum = XAxisModel.ViewMinimum,
+            //Maximum = XAxisModel.ViewMaximum,
+            //AbsoluteMaximum = XAxisModel.ViewMaximum,
         };
 
 
@@ -226,15 +236,13 @@ public partial class LineChart : UserControl
             IsZoomEnabled = YAxisModel.IsZoom,
             IsPanEnabled = YAxisModel.IsPanning,
             TickStyle = (TickStyle)YAxisModel.TickStyle,
-            Minimum = YAxisModel.ViewMinimum,
-            AbsoluteMinimum = YAxisModel.ViewMinimum,
-            Maximum = YAxisModel.ViewMaximum,
-            AbsoluteMaximum = YAxisModel.ViewMaximum,
+            //Minimum = YAxisModel.ViewMinimum,
+            //AbsoluteMinimum = YAxisModel.ViewMinimum,
+            //Maximum = YAxisModel.ViewMaximum,
+            //AbsoluteMaximum = YAxisModel.ViewMaximum,
         };
 
         //AxisY.MaximumRange=20;
-
-
         UpdateAxis();
     }
 
@@ -266,17 +274,22 @@ public partial class LineChart : UserControl
 
     private void OnPanelChanged()
     {
-        PlotModel.PlotMargins = Panel.Margin.IsNegative()
-            ? new OxyThickness(double.NaN)
-            : new OxyThickness(Panel.Margin.V1, Panel.Margin.V2, Panel.Margin.V3, Panel.Margin.V4);
-        PlotModel.Padding = Panel.Padding.IsNegative()
-            ? new OxyThickness(8)
-            : new OxyThickness(Panel.Padding.V1, Panel.Padding.V2, Panel.Padding.V3, Panel.Padding.V4);
+        PlotModel.PlotMargins = new OxyThickness(
+            Panel.Margin.V1 <= 0 ? double.NaN : Panel.Margin.V1,
+            Panel.Margin.V2 <= 0 ? double.NaN : Panel.Margin.V2,
+            Panel.Margin.V3 <= 0 ? double.NaN : Panel.Margin.V3,
+            Panel.Margin.V4 <= 0 ? double.NaN : Panel.Margin.V4);
 
-        AxisX.MinimumPadding = Panel.AxisMarginScale.V1;
-        AxisX.MaximumPadding = Panel.AxisMarginScale.V3;
-        AxisY.MaximumPadding = Panel.AxisMarginScale.V2;
-        AxisY.MinimumPadding = Panel.AxisMarginScale.V4;
+        PlotModel.Padding = new OxyThickness(
+            Panel.Padding.V1 <= 0 ? 6 : Panel.Margin.V1,
+            Panel.Padding.V2 <= 0 ? 6 : Panel.Margin.V2,
+            Panel.Padding.V3 <= 0 ? 6 : Panel.Margin.V3,
+            Panel.Padding.V4 <= 0 ? 6 : Panel.Margin.V4);
+
+        AxisX.MinimumPadding = Panel.AxisMarginScale.V1 <= 0 ? 0 : Panel.AxisMarginScale.V1;
+        AxisX.MaximumPadding = Panel.AxisMarginScale.V3 <= 0 ? 0 : Panel.AxisMarginScale.V3;
+        AxisY.MaximumPadding = Panel.AxisMarginScale.V2 <= 0 ? 0 : Panel.AxisMarginScale.V2;
+        AxisY.MinimumPadding = Panel.AxisMarginScale.V4 <= 0 ? 0 : Panel.AxisMarginScale.V4;
 
         PlotModel.Title = Panel.Title;
         PlotModel.Subtitle = Panel.Subtitle;
@@ -321,27 +334,34 @@ public partial class LineChart : UserControl
     {
         _annotations.ForEach(item =>
         {
-            switch (item)
+            try
             {
-                case TextAnnotationExt ta:
-                    ta.FontSize = Annotation.FontSize;
-                    ta.FontWeight = Annotation.FontWeight;
-                    ta.FormatString = Annotation.Format;
-                    ta.TextColor = Annotation.TextColor.ToOxyColor();
-                    ta.StrokeThickness = 0;
-                    ta.Update();
-                    break;
-                case LineAnnotation la:
-                    la.StrokeThickness = Annotation.Thickness;
-                    la.LineStyle = (LineStyle)Annotation.LineSytle;
-                    la.Color = Annotation.LineColor.ToOxyColor();
-                    break;
-                case PointAnnotation pa:
-                    pa.Fill = Annotation.PointColor.ToOxyColor();
-                    pa.Size = Annotation.PointSize;
-                    break;
-                default:
-                    return;
+                switch (item)
+                {
+                    case TextAnnotationExt ta:
+                        ta.FontSize = Annotation.FontSize;
+                        ta.FontWeight = Annotation.FontWeight;
+                        ta.FormatString = Annotation.Format;
+                        ta.TextColor = Annotation.TextColor.ToOxyColor();
+                        ta.StrokeThickness = 0;
+                        ta.Update();
+                        break;
+                    case LineAnnotation la:
+                        la.StrokeThickness = Annotation.Thickness;
+                        la.LineStyle = (LineStyle)Annotation.LineSytle;
+                        la.Color = Annotation.LineColor.ToOxyColor();
+                        break;
+                    case PointAnnotation pa:
+                        pa.Fill = Annotation.PointColor.ToOxyColor();
+                        pa.Size = Annotation.PointSize;
+                        break;
+                    default:
+                        return;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
             }
         });
 
@@ -468,16 +488,19 @@ public partial class LineChart : UserControl
 
                 var annotation = new TextAnnotationExt()
                 {
-                    Transform = Pixel2XCoordinate,
+                    TransformX = Pixel2XCoordinate,
+                    TransformY = Pixel2YCoordinate,
                     TargetX = close.X,
+                    TargetY = close.Y,
+                    OffsetX = series.LabelMargin,
+                    OffsetY = series.LabelMargin,
                     TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
                     TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
-                    TargetY = close.Y,
                     Text = series.TrackerFormatString.Format(series.Title, AxisX.Title, close.X, AxisY.Title, close.Y),
                     StrokeThickness = 0,
                     TextColor = OxyColors.Black,
-                    FontSize = 14,
-                    FontWeight = 500,
+                    FontSize = series.FontSize,
+                    FontWeight = series.FontWeight,
                 };
                 annotation.Update();
                 PlotModel.Annotations.Add(annotation);
@@ -502,77 +525,87 @@ public partial class LineChart : UserControl
         _annotationFlag++;
         _annotationPoint = e.GetPosition(this);
 
-
-
         var render = _annotationPoint;
         var coor = point;
 
         // 仅允许一个x的annotation
-        _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
-        _annotations.Clear();
-        PlotModel.Annotations.Clear();
-
-        PlotModel.Series.ForEach(item =>
+        try
         {
-            if (item is not LineSeries series) return;
+            _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
+            _annotations.Clear();
+            PlotModel.Annotations.Clear();
 
-            var y = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
-            var select = item.GetNearestPoint(new ScreenPoint(render.X, AxisY.Transform(y)), true).DataPoint;
-
-            var text = new TextAnnotationExt()
+            PlotModel.Series.ForEach(item =>
             {
-                TargetX = select.X,
-                TargetY = select.Y,
-                SerialTitle = series.Title,
-                TitleX = AxisX.Title,
-                TitleY = AxisY.Title,
-                FormatString = Annotation.Format,
-                Transform = Pixel2XCoordinate,
+                if (item is not LineSeries series) return;
 
-                TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
-                TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
-            };
-            text.Update();
-            PlotModel.Annotations.Add(text);
-            _annotations.Add(text);
+                var y = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
+                var select = item.GetNearestPoint(new ScreenPoint(render.X, AxisY.Transform(y)), true).DataPoint;
 
-            if (_realLineAnnotation.MaximumY.IsNaN()
-                || _realLineAnnotation.MaximumY < select.Y)
-            {
-                var line = new LineAnnotation()
+                var text = new TextAnnotationExt()
                 {
-                    X = point.X,
-                    Type = LineAnnotationType.Vertical,
-                    StrokeThickness = 2,
-                    MaximumY = select.Y,
-                    LineStyle = LineStyle.Automatic,
-                    Color = OxyColors.Red,
+                    TargetX = select.X,
+                    TargetY = select.Y,
+                    SerialTitle = series.Title,
+                    TitleX = AxisX.Title,
+                    TitleY = AxisY.Title,
+                    FormatString = Annotation.Format,
+                    TransformX = Pixel2XCoordinate,
+                    TransformY = Pixel2YCoordinate,
+
+                    TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
+                    TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
                 };
+                text.Update();
+                PlotModel.Annotations.Add(text);
+                _annotations.Add(text);
 
-                PlotModel.Annotations.Add(line);
-                _annotations.Add(line);
-
-                if (!_realLineAnnotation.MaximumY.IsNaN())
+                if (_realLineAnnotation.MaximumY.IsNaN()
+                    || _realLineAnnotation.MaximumY < select.Y)
                 {
-                    PlotModel.Annotations.Remove(_realLineAnnotation);
-                    _annotations.Remove(_realLineAnnotation);
+                    var line = new LineAnnotation()
+                    {
+                        X = point.X,
+                        Type = LineAnnotationType.Vertical,
+                        StrokeThickness = 2,
+                        MaximumY = select.Y,
+                        LineStyle = LineStyle.Automatic,
+                        Color = OxyColors.Red,
+                    };
+
+                    PlotModel.Annotations.Add(line);
+                    _annotations.Add(line);
+
+                    if (!_realLineAnnotation.MaximumY.IsNaN())
+                    {
+                        PlotModel.Annotations.Remove(_realLineAnnotation);
+                        _annotations.Remove(_realLineAnnotation);
+                    }
+
+                    _realLineAnnotation = line;
                 }
 
-                _realLineAnnotation = line;
-            }
+                var dot = new PointAnnotation()
+                {
+                    X = select.X,
+                    Y = select.Y,
+                    Fill = OxyColors.Red,
+                };
 
-            var dot = new PointAnnotation()
-            {
-                X = select.X,
-                Y = select.Y,
-                Fill = OxyColors.Red,
-            };
+                PlotModel.Annotations.Add(dot);
+                _annotations.Add(dot);
 
-            PlotModel.Annotations.Add(dot);
-            _annotations.Add(dot);
-        });
+                Selected = select.X;
+            });
 
-        OnAnnotationChanged();
+            OnAnnotationChanged();
+
+
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine(e.ToString());
+        }
 
 
     }

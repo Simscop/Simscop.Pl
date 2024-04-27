@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lift.UI.Tools.Extension;
 using OxyPlot;
+using OxyPlot.Axes;
 
 namespace Simscop.Pl.Ui.Charts;
 
@@ -14,7 +15,12 @@ internal class TextAnnotationExt : TextAnnotation
     /// <summary>
     /// 左边转换，将像素转成直角坐标系
     /// </summary>
-    public new Func<double, double>? Transform { get; set; }
+    public new Func<double, double>? TransformX { get; set; }
+
+    /// <summary>
+    /// 左边转换，将像素转成直角坐标系
+    /// </summary>
+    public new Func<double, double>? TransformY { get; set; }
 
     /// <summary>
     /// 直角坐标系X轴坐标
@@ -29,7 +35,7 @@ internal class TextAnnotationExt : TextAnnotation
     /// <summary>
     /// 偏移X轴像素点距离
     /// </summary>
-    public double OffsetX { get; set; } = 30;
+    public double OffsetX { get; set; } = 5;
 
     /// <summary>
     /// 偏移Y轴像素点距离
@@ -58,8 +64,9 @@ internal class TextAnnotationExt : TextAnnotation
 
     public void Update()
     {
-        _ = Transform is not null
-            ? TextPosition = new DataPoint(TargetX + Transform(OffsetX), TargetY + Transform(OffsetY))
+        _ = TransformX is not null 
+            && TransformY is not null
+            ? TextPosition = new DataPoint(TargetX + TransformX(OffsetX), TargetY + TransformY(OffsetY))
             : TextPosition = TextPosition;
 
         if (FormatString is not null)

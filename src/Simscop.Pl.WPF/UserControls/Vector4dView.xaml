@@ -1,0 +1,37 @@
+﻿<UserControl
+    x:Class="Simscop.Pl.WPF.UserControls.Vector4dView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UniformGrid Columns="2" Rows="2">
+        <UniformGrid.Resources>
+            <ResourceDictionary>
+                <Style BasedOn="{StaticResource {x:Type liftui:NumericUpDown}}" TargetType="liftui:NumericUpDown">
+                    <Setter Property="Margin" Value="2" />
+                </Style>
+            </ResourceDictionary>
+        </UniformGrid.Resources>
+        <liftui:NumericUpDown
+            x:Name="V1"
+            DecimalPlaces="2"
+            ValueChanged="ValueChanged" />
+        <liftui:NumericUpDown
+            x:Name="V2"
+            DecimalPlaces="2"
+            ValueChanged="ValueChanged" />
+        <liftui:NumericUpDown
+            x:Name="V3"
+            DecimalPlaces="2"
+            ValueChanged="ValueChanged" />
+        <liftui:NumericUpDown
+            x:Name="V4"
+            DecimalPlaces="2"
+            ValueChanged="ValueChanged" />
+    </UniformGrid>
+</UserControl>

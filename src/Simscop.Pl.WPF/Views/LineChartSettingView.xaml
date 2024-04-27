@@ -1,0 +1,42 @@
+﻿<liftui:Window
+    x:Class="Simscop.Pl.WPF.Views.LineChartSettingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:liftui="https://github.com/pchuan98/Lift.UI"
+    xmlns:local="clr-namespace:Simscop.Pl.WPF.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="clr-namespace:Simscop.Pl.WPF.UserControls"
+    Title="图表设置"
+    Width="600"
+    Height="500"
+    Topmost="True"
+    mc:Ignorable="d">
+
+    <TabControl BorderThickness="0" Style="{DynamicResource TabControlInLine}">
+        <TabItem Header="曲线">
+            <TextBox
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="待设置中"
+                TextAlignment="Center" />
+        </TabItem>
+        <TabItem Header="面板">
+            <userControls:PanelView x:Name="PanelView" Margin="0,5,0,0" />
+        </TabItem>
+        <TabItem Header="标记">
+            <userControls:AnnotationView x:Name="AnnotationView" Margin="0,5,0,0" />
+        </TabItem>
+        <TabItem Header="坐标轴">
+            <TabControl BorderThickness="0" Style="{DynamicResource TabControlInLine}">
+                <TabItem Header="X轴">
+                    <userControls:AxisView x:Name="AxisXView" />
+                </TabItem>
+                <TabItem Header="Y轴">
+                    <userControls:AxisView x:Name="AxisYView" />
+                </TabItem>
+            </TabControl>
+        </TabItem>
+
+    </TabControl>
+</liftui:Window>
