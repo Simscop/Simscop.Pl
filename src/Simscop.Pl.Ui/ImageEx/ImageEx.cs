@@ -1,16 +1,12 @@
-﻿using System.CodeDom;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using Accessibility;
-using Lift.Core.ImageArray.Helper;
+using OxyPlot.Series;
 
 namespace Simscop.Pl.Ui.ImageEx;
 
@@ -35,8 +31,10 @@ public class ImageExViewerBehavior : Behavior<ImageEx>
         AssociatedObject.Scroll!.PreviewMouseUp -= OnMoveStop;
     }
 
-    private void OnZoomChanged(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    private void OnZoomChanged(object sender, MouseWheelEventArgs e)
     {
+        var oldScale = AssociatedObject.ImagePanelScale;
+
         // 放大倍数使用放大十倍以内为0.1，当大100倍以内为1，以此内推
         var scale = Math.Log10(AssociatedObject.ImagePanelScale / AssociatedObject.DefaultImagePanelScale);
 
@@ -52,6 +50,17 @@ public class ImageExViewerBehavior : Behavior<ImageEx>
         }
         else
             AssociatedObject.ImagePanelScale += AssociatedObject.DefaultImagePanelScale * scale;
+
+        // update the offset
+        if (AssociatedObject.ImagePanelScale <= AssociatedObject.DefaultImagePanelScale) return;
+
+        var transform = AssociatedObject.ImagePanelScale / oldScale;
+        var pos = e.GetPosition(AssociatedObject.Box);
+        var target = new Point(pos.X * transform, pos.Y * transform);
+        var offset = target - pos;
+
+        AssociatedObject.Scroll!.ScrollToHorizontalOffset(AssociatedObject.Scroll.HorizontalOffset + offset.X);
+        AssociatedObject.Scroll!.ScrollToVerticalOffset(AssociatedObject.Scroll.VerticalOffset + offset.Y);
     }
 
     private DateTime _flag = DateTime.Now;
@@ -73,13 +82,13 @@ public class ImageExViewerBehavior : Behavior<ImageEx>
     {
         if (e.LeftButton != MouseButtonState.Pressed) return;
         if (_cursor.X < 0 || _cursor.Y < 0) return;
-        if (AssociatedObject.Scroll is null) return;
+
 
         var pos = e.GetPosition(AssociatedObject);
         var offset = pos - _cursor;
         _cursor = pos;
 
-        AssociatedObject.Scroll.ScrollToHorizontalOffset(AssociatedObject.Scroll.HorizontalOffset - offset.X);
+        AssociatedObject.Scroll!.ScrollToHorizontalOffset(AssociatedObject.Scroll.HorizontalOffset - offset.X);
         AssociatedObject.Scroll.ScrollToVerticalOffset(AssociatedObject.Scroll.VerticalOffset - offset.Y);
     }
 }
