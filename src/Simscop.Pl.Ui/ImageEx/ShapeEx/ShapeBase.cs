@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Lift.UI.Tools.Extension;
@@ -48,6 +49,7 @@ public abstract class ShapeBase : Shape
     public virtual void SetSelected(InkCanvas? canvas)
     {
         if (canvas is null) return;
+
         foreach (var obj in canvas.Children)
         {
             if (obj is not ShapeBase shape) continue;
@@ -103,7 +105,11 @@ public abstract class ShapeBase : Shape
 
         MouseEnter += (_, _) => RefreshStrokeThickness();
         MouseLeave += (_, _) => RefreshStrokeThickness();
-        MouseDown += (_, _) => SetSelected();
+        MouseDown += (_, e) =>
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                SetSelected();
+        };
     }
 
     /// <summary>

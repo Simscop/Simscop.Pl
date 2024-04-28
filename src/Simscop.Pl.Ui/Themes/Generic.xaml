@@ -4,7 +4,7 @@
     xmlns:imageEx="clr-namespace:Simscop.Pl.Ui.ImageEx"
     xmlns:shapeEx="clr-namespace:Simscop.Pl.Ui.ImageEx.ShapeEx">
     <Style TargetType="imageEx:ImageEx">
-        <Setter Property="Background" Value="Black" />
+        <Setter Property="Background" Value="Transparent" />
 
         <Setter Property="Template">
             <Setter.Value>

@@ -41,6 +41,8 @@ public class ImageExViewerBehavior : Behavior<ImageEx>
     {
         var oldScale = AssociatedObject.ImagePanelScale;
 
+        if (oldScale <= 0) return;
+
         // 放大倍数使用放大十倍以内为0.1，当大100倍以内为1，以此内推
         var scale = Math.Log10(AssociatedObject.ImagePanelScale / AssociatedObject.DefaultImagePanelScale);
 
@@ -153,6 +155,7 @@ public class ImageExDrawBehavior : Behavior<ImageEx>
         //AssociatedObject.ShapeCollection.Add(rec);
         AssociatedObject.ShapeMarker!.PointStart = AssociatedObject.ShapePreviewer!.PointStart;
         AssociatedObject.ShapeMarker!.PointEnd = AssociatedObject.ShapePreviewer!.PointEnd;
+        AssociatedObject.ShapeMarker!.Visibility = Visibility.Visible;
 
         AssociatedObject.ShapeMarker!.Refresh();
 
@@ -162,7 +165,8 @@ public class ImageExDrawBehavior : Behavior<ImageEx>
 
         var location = new Point(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y));
 
-        AssociatedObject.OnMarkderChanged?.Invoke(new Rect(location.X, location.Y, marker.Width, marker.Height));
+        AssociatedObject.OnMarkderChanged
+            ?.Invoke(new Rect(location.X, location.Y, marker.Width, marker.Height));
     }
 
     private void OnCanvasPreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -170,9 +174,6 @@ public class ImageExDrawBehavior : Behavior<ImageEx>
         if (e.LeftButton == MouseButtonState.Pressed
             || e.RightButton != MouseButtonState.Pressed) return;
 
-        _flag = true;
-
-        AssociatedObject.Canvas!.Cursor = Cursors.Cross;
         AssociatedObject.ShapePreviewer!.PointStart = e.GetPosition(AssociatedObject.Canvas);
     }
 
@@ -182,6 +183,9 @@ public class ImageExDrawBehavior : Behavior<ImageEx>
             || e.RightButton != MouseButtonState.Pressed) return;
 
         AssociatedObject.ShapePreviewer!.PointEnd = e.GetPosition(AssociatedObject.Canvas);
+
+        _flag = true;
+        AssociatedObject.Canvas!.Cursor = Cursors.Cross;
 
         AssociatedObject.ShapePreviewer!.Visibility = Visibility.Visible;
         AssociatedObject.ShapePreviewer!.Refresh();
@@ -204,6 +208,7 @@ public class ImageExDrawBehavior : Behavior<ImageEx>
         return !(pos.X < 0 || pos.Y < 0 || pos.X > width || pos.Y > height);
     }
 }
+
 
 [TemplatePart(Name = NamePartMainPanel, Type = typeof(Panel))]
 [TemplatePart(Name = NamePartScrollView, Type = typeof(ScrollViewer))]
@@ -257,10 +262,7 @@ public class ImageEx : ContentControl
     /// </summary>
     public const string ZoomScale = "ZoomScale";
 
-    /// <summary>
-    /// Markder相关路由
-    /// </summary>
-    public static readonly RoutedUICommand MarkerCommand = new RoutedUICommand();
+    public static readonly RoutedUICommand MarkerCommand = new();
 
     #endregion
 
@@ -344,7 +346,6 @@ public class ImageEx : ContentControl
         base.OnRender(drawingContext);
 
         UpdateImageInfo();
-        UpdateImage();
     }
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -352,7 +353,7 @@ public class ImageEx : ContentControl
         base.OnRenderSizeChanged(sizeInfo);
 
         UpdateImageInfo();
-        UpdateImage();
+        TileImage();
     }
 
     public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(
@@ -360,16 +361,20 @@ public class ImageEx : ContentControl
             (o, p) =>
         {
             if (o is not ImageEx ex) return;
-            if (p.NewValue is not BitmapSource s2) return;
-
             ex.UpdateImageInfo();
 
-            if (p.OldValue is BitmapSource s1
-                && Math.Abs(s1.Width - s2.Width) < 0.001
-                && Math.Abs(s1.Height - s2.Height) < 0.001)
-                ex.UpdateImage(false);
+            if (p.OldValue is not BitmapSource s1)
+            {
+                ex.TileImage();
+                return;
+            }
 
-            ex.UpdateImage();
+            if (p.NewValue is not BitmapSource s2) return;
+
+            if (Math.Abs(s1.Width - s2.Width) > 0.001
+                || Math.Abs(s1.Height - s2.Height) > 0.001) ex.TileImage();
+
+
         }));
 
     public ImageSource? ImageSource
@@ -439,13 +444,16 @@ public class ImageEx : ContentControl
     #endregion
 
     /// <summary>
-    /// 更新图像
+    /// 平铺图案
     /// </summary>
-    /// <param name="isTile">是否平铺图像</param>
-    private void UpdateImage(bool isTile = true)
+    private void TileImage()
     {
-        if (isTile)
-            ImagePanelScale = DefaultImagePanelScale;
+        ImagePanelScale = DefaultImagePanelScale;
+
+        if (Scroll is null) return;
+
+        Scroll.ScrollToVerticalOffset(0);
+        Scroll.ScrollToHorizontalOffset(0);
     }
 
     private void UpdateImageInfo()
