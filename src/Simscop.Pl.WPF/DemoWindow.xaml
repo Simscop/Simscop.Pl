@@ -15,5 +15,7 @@
     mc:Ignorable="d">
     <Grid>
         <imageEx:ImageEx x:Name="Image" />
+
+
     </Grid>
 </Window>

@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
+﻿using System.Diagnostics;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using Simscop.Pl.Ui.ImageEx;
 
 namespace Simscop.Pl.WPF
 {
@@ -25,7 +15,29 @@ namespace Simscop.Pl.WPF
         {
             InitializeComponent();
 
-            Image.ImageSource = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif").ToBitmapSource();
+            var mat = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif", ImreadModes.Unchanged);
+            Image.ImageSource = mat.ToBitmapSource();
+
+            Debug.WriteLine($"{mat.Channels()} - {mat.Depth()}");
+
+            Image.OnMarkderChanged += (r) =>
+            {
+                Debug.WriteLine(r);
+            };
+
+            Image.GetImageColorFromPosition = (x, y) =>
+            {
+                if (x < 0 || y < 0) return Colors.Transparent;
+
+                var vec = mat.At<Vec3b>(y, x);
+                var color = Color.FromArgb(255, vec.Item2, vec.Item1, vec.Item0);
+
+                Image.Background = new SolidColorBrush(color);
+
+                return color;
+            };
+
+        
         }
     }
 }
