@@ -1,10 +1,13 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Data;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Messaging;
 using OpenCvSharp.WpfExtensions;
 using OxyPlot;
 using OxyPlot.Series;
+using Simscop.Pl.Core;
 using Simscop.Pl.Ui;
 using Simscop.Pl.Ui.Extensions;
 using Simscop.Pl.WPF.Managers;
@@ -31,20 +34,21 @@ public partial class MainWindow
 
         DataContext = VmManager.MainViewModel;
 
-        Task.Run(() =>
-        {
-            while (true)
-            {
-                var mat = WeakReferenceMessenger.Default.Send<CaptureRequestMessage>().Response;
-                if (mat is null) return;
+        //Task.Run(() =>
+        //{
+        //    while (true)
+        //    {
+        //        var mat = WeakReferenceMessenger.Default.Send<CaptureRequestMessage>().Response;
 
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    ImageViewer.ImageSource = mat.ToBitmapSource();
-                });
+        //        if (mat is not null)
+        //            Application.Current.Dispatcher.BeginInvoke(() =>
+        //            {
+        //                ImageViewer.ImageSource = mat.ToBitmapSource();
+        //            });
 
-            }
-        });
+        //        Thread.Sleep(10);
+        //    }
+        //});
 
         RegisterInvoke();
         RegisterMessage();
@@ -106,6 +110,27 @@ public partial class MainWindow
         };
 
         Line.SetBinding(LineChart.SelectedXProperty, new Binding("Selected") { Source = VmManager.LineChartViewModel, Mode = BindingMode.TwoWay });
+
+        //HardwareManager.Camera!.IsAutoExposure = false;
+      
+        HardwareManager.Camera!.OnCaptureChanged += img =>
+        {
+            Task.Run(() =>
+            {
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    var source = img.ToBitmapSource();
+                    ImageViewer.ImageSource = source;
+
+                    Debug.WriteLine($"{source.Width} - {source.Height}");
+                    //GC.Collect();
+                });
+
+            });
+
+          
+            Debug.WriteLine($"{HardwareManager.Camera.Exposure}");
+        };
     }
 
     private void MainChildVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -158,5 +183,14 @@ public partial class MainWindow
     {
         base.OnClosed(e);
         Application.Current.Shutdown();
+    }
+
+    private void OnCameraSettingViewClicked(object sender, RoutedEventArgs e)
+    {
+        var view = new CameraSettingView()
+        {
+            Background = Brushes.White,
+        };
+        view.Show();
     }
 }

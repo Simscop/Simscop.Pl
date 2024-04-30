@@ -5,6 +5,7 @@ using System.Windows.Media;
 using Fake.Hardware;
 using Lift.UI.Controls;
 using Simscop.Pl.Core;
+using Simscop.Pl.Hardware.Camera;
 using Simscop.Pl.WPF.Views;
 using Simscop.Pl.WPF.Views.MessageBox;
 
@@ -18,7 +19,7 @@ public partial class App : Application
     public App()
     {
         HardwareManager.Motor = new FakeMortor();
-        HardwareManager.Camera = new FakeCamera();
+        HardwareManager.Camera = new ToupTek();
         HardwareManager.Spectrometer = new FakeSpectrometer();
         HardwareManager.OmniDriver = new FakeOmniDriver();
         //DispatcherUnhandledException += App_DispatcherUnhandledException;
@@ -47,11 +48,14 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        var main = new Splash()
+        var main = new MainWindow()
         {
             Background = Brushes.White,
 
         };
         main.Show();
+
+        HardwareManager.Camera.Valid();
+        HardwareManager.Camera.Initialize();
     }
 }

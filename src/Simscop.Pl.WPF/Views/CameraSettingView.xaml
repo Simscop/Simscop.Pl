@@ -13,6 +13,7 @@
     Height="450"
     d:DataContext="{d:DesignInstance viewModels:CameraViewModel}"
     SystemBackdropType="Mica"
+    Topmost="True"
     mc:Ignorable="d">
     <propertyGrid:PropertyGrid SelectedObject="{Binding}" />
 </liftui:Window>

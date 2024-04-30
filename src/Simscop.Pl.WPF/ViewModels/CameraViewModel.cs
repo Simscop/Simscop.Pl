@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Fake.Hardware;
 using Lift.Core.Exception;
 using Lift.UI.V2.Controls.PropertyGrid;
+using OpenCvSharp.WpfExtensions;
 using Simscop.Pl.Core;
 using Simscop.Pl.Core.Services;
 using Simscop.Pl.WPF.Managers;
@@ -30,21 +32,19 @@ public partial class CameraViewModel : ObservableObject
             if (msg.HasReceivedResponse)
                 throw new InvalidException("The message has been done.");
 
-            Camera.Capture(out var img);
-            msg.Reply(img);
+            msg.Reply(Camera.Capture(out var img) ? img : null);
         });
-
-        Exposure = 20000;
     }
 
-    [Range(10, 10000)] // todo 后面手动给相机的实际结果
+    [Range(10, 10000)]
+    [PropertyGrid(Delay = 1000)]
     public double Exposure
     {
         get => Camera.Exposure;
         set => SetProperty(Camera.Exposure, value, (_) => Camera.Exposure = value);
     }
 
-    [Range(10, 10000)] // todo 后面手动给相机的实际结果
+    [Range(10, 10000)]
     public double Temperature
     {
         get => Camera.Temperature;

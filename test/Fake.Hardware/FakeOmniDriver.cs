@@ -21,6 +21,8 @@ public class FakeOmniDriver : IOmniDriverService
 
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     public bool OpenSpectrometers(int index) => index == 0;
 
     public bool OpenAllSpectrometers() => true;

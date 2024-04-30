@@ -21,6 +21,8 @@ public class FakeMortor : IMotorService
 
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     public string Unit { get; } = "um";
 
     public (double X, double Y, double Z) Xyz { get; } = (1, 2, 3);

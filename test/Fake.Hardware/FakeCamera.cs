@@ -19,6 +19,8 @@ public class FakeCamera : ICameraService
 
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     private List<Color> _colors = new()
     {
         Color.Transparent,
@@ -230,4 +232,5 @@ public class FakeCamera : ICameraService
 
     public (uint Width, uint Height) Resolution { get; set; } = (1024, 1024);
     public List<(uint Width, uint Height)> Resolutions { get; set; } = new List<(uint Width, uint Height)>();
+    public event Action<Mat>? OnCaptureChanged;
 }

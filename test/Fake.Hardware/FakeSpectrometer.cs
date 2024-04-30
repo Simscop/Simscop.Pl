@@ -21,6 +21,8 @@ public class FakeSpectrometer : ISpectrometerService
 
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     public int Index { get; set; } = 0;
     public int BoxcarWidth { get; set; } = 0;
     public int IntegrationStepIncrement { get; } = 0;

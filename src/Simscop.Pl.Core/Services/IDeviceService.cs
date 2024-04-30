@@ -46,4 +46,9 @@ public interface IDeviceService
     /// </summary>
     /// <returns></returns>
     public bool DeInitialize();
+
+    /// <summary>
+    /// 最后一个错误
+    /// </summary>
+    public string? LastErrorMessage { get; }
 }

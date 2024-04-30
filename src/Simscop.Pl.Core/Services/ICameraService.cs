@@ -143,4 +143,9 @@ public interface ICameraService : IDeviceService
     /// 支持的分辨率种类
     /// </summary>
     public List<(uint Width, uint Height)> Resolutions { get; set; }
+
+    /// <summary>
+    /// 当捕获结果刷新
+    /// </summary>
+    public event Action<Mat> OnCaptureChanged;
 }

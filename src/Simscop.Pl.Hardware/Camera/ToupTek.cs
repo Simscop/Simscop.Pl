@@ -1,4 +1,6 @@
-﻿using OpenCvSharp;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
+using OpenCvSharp;
 using Simscop.Pl.Core.Services;
 using Size = Simscop.Pl.Core.Size;
 
@@ -11,10 +13,9 @@ public class ToupTek : ICameraService
 {
     private Toupcam? _camera = null;
 
-    public ToupTek()
-    {
-        Resolutions = new();
-    }
+    private bool _passCapture = true;
+
+    private bool _isCapture = false;
 
     public string Model { get; set; } = "none";
     public string SerialNumber { get; set; } = "none";
@@ -42,8 +43,9 @@ public class ToupTek : ICameraService
 
             return true;
         }
-        catch (Exception _)
+        catch (Exception e)
         {
+            LastErrorMessage = e.Message;
             return false;
         }
     }
@@ -57,6 +59,13 @@ public class ToupTek : ICameraService
 
         // note 当前只考虑多色模式
         var mode = _camera.MonoMode;
+        //Exposure = 1000;
+
+        // 获取范围
+        _camera.get_ExpTimeRange(out var min, out var max, out _);
+        ExposureRange = (min / 1000.0, max / 1000.0);
+
+
 
         return _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
     }
@@ -70,16 +79,27 @@ public class ToupTek : ICameraService
         if (evt == Toupcam.eEVENT.EVENT_IMAGE)
         {
             var size = ImageSize;
-            var mat = new Mat(size.Height, size.Width, MatType.CV_8UC4);
 
+            var mat = new Mat();
             try
             {
+                mat = new Mat(size.Height, size.Width, MatType.CV_8UC4);
                 var rec = _camera.PullImageV3(mat.Data, 0, 32, (int)mat.Step(), out var info);
 
-                if (rec) _currentImage = mat;
-            }
-            catch (Exception ex) { }
+                if (!rec) return;
 
+                _currentImage = mat.Clone();
+                OnCaptureChanged?.Invoke(_currentImage);
+
+            }
+            catch (Exception ex)
+            {
+                LastErrorMessage = ex.Message;
+            }
+            finally
+            {
+                mat.Dispose();
+            }
         }
     }
 
@@ -91,7 +111,9 @@ public class ToupTek : ICameraService
         return true;
     }
 
-    private Mat _currentImage = new Mat();
+    public string? LastErrorMessage { get; private set; }
+
+    private Mat? _currentImage = new();
 
     public bool Capture(out Mat? img)
     {
@@ -100,19 +122,23 @@ public class ToupTek : ICameraService
 
         if (size.Width == 0 || size.Height == 0) return false;
 
+        //_currentImage = null;
+        //_passCapture = false;
+
+        //var exp = Exposure / 2;
+        //var count = 0;
+        //while (_currentImage is null || count++ < 4)
+        //    Thread.Sleep((int)exp);
+
         img = _currentImage.Clone();
+        GC.Collect();
+
+        _passCapture = true;
+
         return true;
     }
 
-    public (double Min, double Max) ExposureRange
-    {
-        get
-        {
-            if (_camera is null) return (-1, -1);
-            _camera.get_ExpTimeRange(out var min, out var max, out _);
-            return (min / 1000.0, max / 1000.0);
-        }
-    }
+    public (double Min, double Max) ExposureRange { get; private set; }
 
     public double Exposure
     {
@@ -128,7 +154,8 @@ public class ToupTek : ICameraService
             if (_camera is null
                 || value > ExposureRange.Max
                 || value < ExposureRange.Min) return;
-            _camera.put_ExpoTime((uint)Math.Floor(value * 1000));
+            if (!_camera.put_ExpoTime((uint)Math.Floor(value * 1000)))
+                throw new Exception();
         }
     }
 
@@ -278,5 +305,7 @@ public class ToupTek : ICameraService
         }
     }
 
-    public List<(uint Width, uint Height)> Resolutions { get; set; }
+    public List<(uint Width, uint Height)> Resolutions { get; set; } = new();
+
+    public event Action<Mat>? OnCaptureChanged;
 }

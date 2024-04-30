@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,6 +8,7 @@ using System.Windows.Threading;
 using Lift.UI.Controls;
 using Simscop.Pl.Core;
 using Simscop.Pl.WPF.Helpers;
+using MessageBox = Lift.UI.Controls.MessageBox;
 
 namespace Simscop.Pl.WPF;
 
@@ -24,8 +26,6 @@ public partial class Splash
         InitializeComponent();
 
     }
-
-
     protected override void OnRender(DrawingContext drawingContext)
     {
         if (!_init) return;
@@ -39,6 +39,10 @@ public partial class Splash
 
             OnValidCamera();
             Thread.Sleep(500);
+
+            Close();
+
+
             OnValidMotor();
             Thread.Sleep(500);
             OnValidSpectrometer();
@@ -78,6 +82,8 @@ public partial class Splash
             SwitchTextAnimation(Camera, "相机环境不完整");
             Thread.Sleep(1000);
             HardwareManager.IsCameraOk = false;
+            if (HardwareManager.Camera.LastErrorMessage is { } msg)
+                MessageBox.Show(msg, "CameraError");
             return;
         }
 
@@ -280,5 +286,17 @@ public partial class Splash
             Storyboard.SetTargetProperty(opacityAnimation2, new PropertyPath(OpacityProperty));
             storyboard.Begin();
         });
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        if (HardwareManager.IsCameraOk)
+        {
+            var main = new MainWindow();
+            main.Show();
+        }
+
+
+        base.OnClosing(e);
     }
 }

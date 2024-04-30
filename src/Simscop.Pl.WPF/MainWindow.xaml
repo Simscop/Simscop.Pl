@@ -14,7 +14,6 @@
     Height="800"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
     SystemBackdropType="Mica"
-    Topmost="True"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>
@@ -25,6 +24,10 @@
                 FontWeight="Bold"
                 Text="Simscop.Pl" />
             <Menu Margin="20,0,0,0" VerticalAlignment="Center">
+                <MenuItem
+                    VerticalAlignment="Center"
+                    Click="OnCameraSettingViewClicked"
+                    Header="相机设置" />
                 <MenuItem
                     VerticalAlignment="Center"
                     Click="OnLineChartSettingViewClicked"

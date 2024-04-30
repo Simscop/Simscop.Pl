@@ -46,6 +46,8 @@ public class OmniManager : IOmniDriverService
         return true;
     }
 
+    public string? LastErrorMessage => null;
+
     public bool OpenSpectrometers(int index) => true;
 
     public bool OpenAllSpectrometers()
