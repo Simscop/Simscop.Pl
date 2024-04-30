@@ -20,7 +20,7 @@ public partial class App : Application
         HardwareManager.Motor = new FakeMortor();
         HardwareManager.Camera = new FakeCamera();
         HardwareManager.Spectrometer = new FakeSpectrometer();
-
+        HardwareManager.OmniDriver = new FakeOmniDriver();
         //DispatcherUnhandledException += App_DispatcherUnhandledException;
         //TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -47,7 +47,7 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        var main = new MainWindow()
+        var main = new Splash()
         {
             Background = Brushes.White,
 
