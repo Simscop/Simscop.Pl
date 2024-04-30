@@ -169,15 +169,17 @@ public class FakeCamera : ICameraService
 
     public bool Capture(out Mat? img)
     {
-        Thread.Sleep((int)Exposure);
+        if (_count != 0) Thread.Sleep((int)Exposure);
 
         var color = _colors[(_count++) % _colors.Count];
 
-        //img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
-        //        new Scalar(color.B, color.G, color.R, color.A));
+        img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
+                new Scalar(color.B, color.G, color.R, color.A));
 
-        img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+        //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
 
+
+        ImageSize = new Size(img.Size().Width, img.Size().Height);
         return true;
     }
 
@@ -215,7 +217,7 @@ public class FakeCamera : ICameraService
 
     public int ImageDetph { get; set; } = 8;
 
-    public Size ImageSize { get; } = new Size(1024, 1024);
+    public Size ImageSize { get; private set; } = new Size(0, 0);
 
     public (double Left, double Right) LevelRange { get; } = (0, 255);
 

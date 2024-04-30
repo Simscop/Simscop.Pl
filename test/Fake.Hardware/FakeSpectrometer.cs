@@ -48,6 +48,7 @@ public class FakeSpectrometer : ISpectrometerService
         return weight * gaussian1 + (1 - weight) * gaussian2;
     }
 
+
     public double[] GetSpectrum() => Enumerable.Range(0, NumberOfPixels).Select(item =>
     {
         var noise = _random.NextDouble();
