@@ -88,7 +88,6 @@ public partial class LineChart : UserControl
         else
             PlotModel.Series[index] = series;
 
-        OnSerialChanged();
         UpdateAxis();
     }
 
@@ -156,15 +155,6 @@ public partial class LineChart : UserControl
         IsZoomEnabled = false,
         IsPanEnabled = false
     };
-
-    public static readonly DependencyProperty SelectedProperty = DependencyProperty.Register(
-        nameof(Selected), typeof(double), typeof(LineChart), new PropertyMetadata(default(double)));
-
-    public double Selected
-    {
-        get => (double)GetValue(SelectedProperty);
-        set => SetValue(SelectedProperty, value);
-    }
 
     #region XAxis
 
@@ -309,10 +299,6 @@ public partial class LineChart : UserControl
     #region Annotation
 
     private readonly List<Annotation> _annotations = new();
-
-    private Point _annotationPoint = new();
-
-    private int _annotationFlag = 0;
 
     private LineAnnotation _realLineAnnotation = new();
 
@@ -512,124 +498,113 @@ public partial class LineChart : UserControl
         e.Handled = false;
     }
 
+    public static readonly DependencyProperty SelectedXProperty = DependencyProperty.Register(
+        nameof(SelectedX), typeof(double), typeof(LineChart), new PropertyMetadata(default(double)));
+
+    public double SelectedX
+    {
+        get => (double)GetValue(SelectedXProperty);
+        set => SetValue(SelectedXProperty, value);
+    }
+
+    private Point _doublePositionPoint = new();
+    private Point _doubleTransformPoint = new();
+
+    private bool _doubleFlag = false;
+
     protected override void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
     {
-        var line = new LineSeries();
-
-        if (!(e.ChangedButton == MouseButton.Left && TransformFromPoint(e, out var point)))
+        if (!(e.ChangedButton == MouseButton.Left && TransformFromPoint(e, out _doubleTransformPoint)))
         {
             e.Handled = true;
             return;
         }
 
-        _annotationFlag++;
-        _annotationPoint = e.GetPosition(this);
+        _doublePositionPoint = e.GetPosition(this);
 
-        var render = _annotationPoint;
-        var coor = point;
+        _doubleFlag = true;
 
         // 仅允许一个x的annotation
-        try
-        {
-            _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
-            _annotations.Clear();
-            PlotModel.Annotations.Clear();
-
-            PlotModel.Series.ForEach(item =>
-            {
-                if (item is not LineSeries series) return;
-
-                var y = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
-                var select = item.GetNearestPoint(new ScreenPoint(render.X, AxisY.Transform(y)), true).DataPoint;
-
-                var text = new TextAnnotationExt()
-                {
-                    TargetX = select.X,
-                    TargetY = select.Y,
-                    SerialTitle = series.Title,
-                    TitleX = AxisX.Title,
-                    TitleY = AxisY.Title,
-                    FormatString = Annotation.Format,
-                    TransformX = Pixel2XCoordinate,
-                    TransformY = Pixel2YCoordinate,
-
-                    TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
-                    TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
-                };
-                text.Update();
-                PlotModel.Annotations.Add(text);
-                _annotations.Add(text);
-
-                if (_realLineAnnotation.MaximumY.IsNaN()
-                    || _realLineAnnotation.MaximumY < select.Y)
-                {
-                    var line = new LineAnnotation()
-                    {
-                        X = point.X,
-                        Type = LineAnnotationType.Vertical,
-                        StrokeThickness = 2,
-                        MaximumY = select.Y,
-                        LineStyle = LineStyle.Automatic,
-                        Color = OxyColors.Red,
-                    };
-
-                    PlotModel.Annotations.Add(line);
-                    _annotations.Add(line);
-
-                    if (!_realLineAnnotation.MaximumY.IsNaN())
-                    {
-                        PlotModel.Annotations.Remove(_realLineAnnotation);
-                        _annotations.Remove(_realLineAnnotation);
-                    }
-
-                    _realLineAnnotation = line;
-                }
-
-                var dot = new PointAnnotation()
-                {
-                    X = select.X,
-                    Y = select.Y,
-                    Fill = OxyColors.Red,
-                };
-
-                PlotModel.Annotations.Add(dot);
-                _annotations.Add(dot);
-
-                Selected = select.X;
-            });
-
-            OnAnnotationChanged();
-
-
-        }
-        catch (Exception exception)
-        {
-            Debug.WriteLine(e.ToString());
-        }
-
-
+        UpdateAnnotation();
     }
 
-    void OnRefreshAnnotation()
+    public void UpdateAnnotation()
     {
-        PlotModel.Series.ForEach(item =>
+        if (!_doubleFlag) return;
+
+        var render = _doublePositionPoint;
+        var coor = _doubleTransformPoint;
+
+        _realLineAnnotation = new LineAnnotation() { MaximumY = double.NaN };
+        _annotations.Clear();
+        PlotModel.Annotations.Clear();
+
+        var series = PlotModel.Series.FirstOrDefault(item => item is LineSeries) as LineSeries;
+        if (series is null) return;
+
+        var y = series.Points.OrderBy(p => Math.Abs(p.X - coor.X)).FirstOrDefault().Y;
+        var select = series.GetNearestPoint(new ScreenPoint(render.X, AxisY.Transform(y)), true).DataPoint;
+
+        SelectedX = select.X;
+
+        var text = new TextAnnotationExt()
         {
-            _annotations.ForEach(annotation =>
+            TargetX = select.X,
+            TargetY = select.Y,
+            SerialTitle = series.Title,
+            TitleX = AxisX.Title,
+            TitleY = AxisY.Title,
+            FormatString = Annotation.Format,
+            TransformX = Pixel2XCoordinate,
+            TransformY = Pixel2YCoordinate,
+
+            TextVerticalAlignment = OxyPlot.VerticalAlignment.Bottom,
+            TextHorizontalAlignment = OxyPlot.HorizontalAlignment.Left,
+        };
+        text.Update();
+        PlotModel.Annotations.Add(text);
+        _annotations.Add(text);
+
+        if (_realLineAnnotation.MaximumY.IsNaN()
+            || _realLineAnnotation.MaximumY < select.Y)
+        {
+            var realLineAnnotation = new LineAnnotation()
             {
-                if (annotation is TextAnnotationExt tae)
-                {
-                    var x = AxisX.Transform(tae.TargetX);
-                    var y = AxisY.Transform(tae.TargetY);
-                    var tracker = item.GetNearestPoint(new ScreenPoint(x, y), true);
+                X = coor.X,
+                Type = LineAnnotationType.Vertical,
+                StrokeThickness = 2,
+                MaximumY = select.Y,
+                LineStyle = LineStyle.Automatic,
+                Color = OxyColors.Red,
+            };
 
-                    if (tracker is null) throw new Exception();
-                }
-            });
-        });
-    }
+            PlotModel.Annotations.Add(realLineAnnotation);
+            _annotations.Add(realLineAnnotation);
 
-    private void OnSerialChanged()
-    {
-        //OnRefreshAnnotation();
+            if (!_realLineAnnotation.MaximumY.IsNaN())
+            {
+                PlotModel.Annotations.Remove(_realLineAnnotation);
+                _annotations.Remove(_realLineAnnotation);
+            }
+
+            _realLineAnnotation = realLineAnnotation;
+        }
+
+        var dot = new PointAnnotation()
+        {
+            X = select.X,
+            Y = select.Y,
+            Fill = OxyColors.Red,
+        };
+
+        PlotModel.Annotations.Add(dot);
+        _annotations.Add(dot);
+
+
+        OnAnnotationChanged();
+
+
+        //}
+        //catch (InvalidOperationException _) { }
     }
 }
