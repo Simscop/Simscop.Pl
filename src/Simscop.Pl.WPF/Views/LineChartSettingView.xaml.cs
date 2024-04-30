@@ -36,5 +36,7 @@ public partial class LineChartSettingView
         AxisXView.DataContext = VmManager.LineChartViewModel.AxisX;
         AxisYView.DataContext = VmManager.LineChartViewModel.AxisY;
         AnnotationView.DataContext = VmManager.LineChartViewModel.Annotation;
+
+        
     }
 }

@@ -17,18 +17,14 @@ public partial class CameraViewModel : ObservableObject
     #region 硬件部分
 
     [PropertyGrid(Ignore = true)]
-    public ICameraService Camera;
+    public ICameraService Camera = HardwareManager.Camera
+                                   ?? throw new NotImplementedException("The Camera not implemented.");
 
     [PropertyGrid(Ignore = true)]
     public List<(uint Width, uint Height)>? Resolutions;
 
     public CameraViewModel()
     {
-        HardwareManager.Camera = new FakeCamera();
-
-        Camera = HardwareManager.Camera
-                 ?? throw new NotImplementedException("The Camera not implemented.");
-
         Messager.Register<CaptureRequestMessage>(this, (_, msg) =>
         {
             if (msg.HasReceivedResponse)
@@ -38,7 +34,7 @@ public partial class CameraViewModel : ObservableObject
             msg.Reply(img);
         });
 
-        Exposure = 1000;
+        Exposure = 20000;
     }
 
     [Range(10, 10000)] // todo 后面手动给相机的实际结果
