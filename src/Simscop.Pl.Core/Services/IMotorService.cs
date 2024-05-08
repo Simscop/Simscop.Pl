@@ -36,17 +36,37 @@ public interface IMotorService : IDeviceService
     /// </summary>
     public double Z { get; }
 
+    // todo 添加xyz单个和组合的移动方式
+
+    // todo 添加移动校验
+
     /// <summary>
     /// 设置相对位置
     /// </summary>
-    /// <param name="axis"></param>
+    /// <param name="index"></param>
     /// <param name="pos"></param>
-    public void SetRelativePosition(Tuple<int> axis, Tuple<double> pos);
+    public void SetRelativePosition(bool[] index, double[] pos);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public Task AsyncSetRelativePosition(bool[] index, double[] pos);
 
     /// <summary>
     /// 设置绝对位置
     /// </summary>
-    /// <param name="axis"></param>
+    /// <param name="index"></param>
     /// <param name="pos"></param>
-    public void SetAbsolutePosition(Tuple<int> axis, Tuple<double> pos);
+    public void SetAbsolutePosition(bool[] index, double[] pos);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public Task AsyncSetAbsolutePosition(bool[] index, double[] pos);
 }

@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>x86</Platforms>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Include="OpenCvSharp4.Windows" Version="4.9.0.20240103" />
+		<PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.9.0.20240103" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\08 lift\ui\src\Lift.UI\Lift.UI.csproj" />
+	  <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+	  <ProjectReference Include="..\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
+	  <ProjectReference Include="..\Simscop.Pl.Ui\Simscop.Pl.Ui.csproj" />
+	  <ProjectReference Include="..\Simscop.Pl.WPF\Simscop.Pl.WPF.csproj" />
+	</ItemGroup>
+
+	 
+
+</Project>

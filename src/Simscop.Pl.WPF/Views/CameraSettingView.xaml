@@ -13,6 +13,23 @@
     Height="450"
     d:DataContext="{d:DesignInstance viewModels:CameraViewModel}"
     SystemBackdropType="Mica"
+    Topmost="True"
     mc:Ignorable="d">
-    <propertyGrid:PropertyGrid SelectedObject="{Binding}" />
+
+    <StackPanel>
+        <DockPanel>
+            <TextBlock
+                Margin="10,0,33,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                Text="Resolution" />
+            <ComboBox
+                Margin="10,0"
+                DockPanel.Dock="Right"
+                ItemsSource="{Binding Resolutions}"
+                SelectedItem="{Binding ResolutionIndex}" />
+        </DockPanel>
+        <propertyGrid:PropertyGrid SelectedObject="{Binding}" />
+    </StackPanel>
 </liftui:Window>

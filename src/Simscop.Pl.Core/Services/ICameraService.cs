@@ -1,4 +1,6 @@
-﻿using OpenCvSharp;
+﻿using System.Windows;
+using OpenCvSharp;
+using System.Windows.Threading;
 
 namespace Simscop.Pl.Core.Services;
 
@@ -143,4 +145,14 @@ public interface ICameraService : IDeviceService
     /// 支持的分辨率种类
     /// </summary>
     public List<(uint Width, uint Height)> Resolutions { get; set; }
+
+    /// <summary>
+    /// 当捕获结果刷新
+    /// </summary>
+    public event Action<Mat> OnCaptureChanged;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Dispatcher? SafeThreading { get; set; }
 }

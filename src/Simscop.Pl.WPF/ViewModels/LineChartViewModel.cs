@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Simscop.Pl.Core.Models.Charts;
 using Simscop.Pl.Core.Models.Charts.Constants;
 using System.Drawing;
+using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using Simscop.Pl.WPF.Managers;
 
 namespace Simscop.Pl.WPF.ViewModels;
 
@@ -19,6 +21,14 @@ public partial class LineChartViewModel : ObservableObject
         base.OnPropertyChanged(e);
 
         OnValueChanged?.Invoke(e.PropertyName);
+    }
+
+    public LineChartViewModel()
+    {
+        WeakReferenceMessenger.Default.Register<LineChangedMessage>(this, (obj, msg) =>
+        {
+            Application.Current.Dispatcher.BeginInvoke(() => { Data = msg.Points; });
+        });
     }
 
     [ObservableProperty]
@@ -62,6 +72,6 @@ public partial class LineChartViewModel : ObservableObject
 
     partial void OnSelectedChanged(double value)
     {
-        // todo 这里发送消息过去
+        WeakReferenceMessenger.Default.Send(new SelectedWaveChangedMessage(value));
     }
 }

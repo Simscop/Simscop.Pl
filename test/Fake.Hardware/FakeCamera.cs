@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using System.Reflection.Metadata.Ecma335;
+using System.Windows;
+using System.Windows.Threading;
 using OpenCvSharp;
 using Simscop.Pl.Core.Services;
 using Size = Simscop.Pl.Core.Size;
@@ -8,6 +10,33 @@ namespace Fake.Hardware;
 
 public class FakeCamera : ICameraService
 {
+    private DispatcherTimer _timer;
+
+    public FakeCamera()
+    {
+        _timer = new DispatcherTimer()
+        {
+            Interval = TimeSpan.FromSeconds(1)
+        };
+
+        _timer.Tick += (s, e) =>
+        {
+            SafeThreading?.BeginInvoke(() =>
+            {
+                var color = _colors[(_count++) % _colors.Count];
+
+                var img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
+                    new Scalar(color.B, color.G, color.R, color.A));
+
+                //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+                ImageSize = new Size(img.Size().Width, img.Size().Height);
+
+                OnCaptureChanged?.Invoke(img);
+            });
+        };
+        _timer.Start();
+    }
+
     public string? Model { get; set; } = "Fake";
     public string? SerialNumber { get; set; } = "v1.0";
     public string? Fireware { get; set; } = "v1.0";
@@ -18,6 +47,8 @@ public class FakeCamera : ICameraService
     public bool Initialize() => true;
 
     public bool DeInitialize() => true;
+
+    public string? LastErrorMessage => null;
 
     private List<Color> _colors = new()
     {
@@ -169,15 +200,17 @@ public class FakeCamera : ICameraService
 
     public bool Capture(out Mat? img)
     {
-        Thread.Sleep((int)Exposure);
+        if (_count != 0) Thread.Sleep((int)Exposure);
 
         var color = _colors[(_count++) % _colors.Count];
 
-        //img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
-        //        new Scalar(color.B, color.G, color.R, color.A));
+        img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
+                new Scalar(color.B, color.G, color.R, color.A));
 
-        img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+        //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
 
+
+        ImageSize = new Size(img.Size().Width, img.Size().Height);
         return true;
     }
 
@@ -215,7 +248,7 @@ public class FakeCamera : ICameraService
 
     public int ImageDetph { get; set; } = 8;
 
-    public Size ImageSize { get; } = new Size(1024, 1024);
+    public Size ImageSize { get; private set; } = new Size(0, 0);
 
     public (double Left, double Right) LevelRange { get; } = (0, 255);
 
@@ -227,5 +260,13 @@ public class FakeCamera : ICameraService
     }
 
     public (uint Width, uint Height) Resolution { get; set; } = (1024, 1024);
-    public List<(uint Width, uint Height)> Resolutions { get; set; } = new List<(uint Width, uint Height)>();
+    public List<(uint Width, uint Height)> Resolutions { get; set; } = new()
+    {
+        (512,512),
+        (1024,1024),
+        (2048,2048)
+    };
+    public event Action<Mat>? OnCaptureChanged;
+
+    public Dispatcher? SafeThreading { get; set; } = Application.Current.Dispatcher;
 }

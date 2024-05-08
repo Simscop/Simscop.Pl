@@ -33,7 +33,7 @@ public class OmniManager : IOmniDriverService
     {
         HardwareVersion = Wrapper.getApiVersion();
 
-        return false;
+        return true;
     }
 
     /// <inheritdoc />
@@ -45,6 +45,8 @@ public class OmniManager : IOmniDriverService
         Wrapper.closeAllSpectrometers();
         return true;
     }
+
+    public string? LastErrorMessage => null;
 
     public bool OpenSpectrometers(int index) => true;
 

@@ -69,6 +69,8 @@ public class QePro : ISpectrometerService
     /// <inheritdoc />
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     /// <inheritdoc />
     public int Index { get; set; } = 0;
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Lift.UI.Tools.Extension;
@@ -48,6 +49,7 @@ public abstract class ShapeBase : Shape
     public virtual void SetSelected(InkCanvas? canvas)
     {
         if (canvas is null) return;
+
         foreach (var obj in canvas.Children)
         {
             if (obj is not ShapeBase shape) continue;
@@ -72,22 +74,22 @@ public abstract class ShapeBase : Shape
     /// <summary>
     /// 常规状态宽度
     /// </summary>
-    public double ThicknessNormal { get; set; } = 5;
+    public double ThicknessNormal { get; set; } = 0;
 
     /// <summary>
     /// 鼠标放上去后线宽
     /// </summary>
-    public double ThicknessMouseOver { get; set; } = 8;
+    public double ThicknessMouseOver { get; set; } = 0;
 
     /// <summary>
     /// 选择后线宽
     /// </summary>
-    public double ThicknessSelected { get; set; } = 10;
+    public double ThicknessSelected { get; set; } = 0;
 
     /// <summary>
     /// 
     /// </summary>
-    public double ThicknessMouseOverAndSelected { get; set; } = 15;
+    public double ThicknessMouseOverAndSelected { get; set; } = 0;
 
     /// <summary>
     /// 
@@ -103,7 +105,11 @@ public abstract class ShapeBase : Shape
 
         MouseEnter += (_, _) => RefreshStrokeThickness();
         MouseLeave += (_, _) => RefreshStrokeThickness();
-        MouseDown += (_, _) => SetSelected();
+        MouseDown += (_, e) =>
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                SetSelected();
+        };
     }
 
     /// <summary>

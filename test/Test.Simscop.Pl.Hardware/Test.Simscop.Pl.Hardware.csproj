@@ -1,37 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-  </PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<Platforms>AnyCPU;x64;x86</Platforms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="3.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="3.2.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="NETOmniDriver-NET40">
-      <HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETOmniDriver-NET40.dll</HintPath>
-    </Reference>
-    <Reference Include="NETSpam-NET40">
-      <HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETSpam-NET40.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="NETOmniDriver-NET40">
+			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETOmniDriver-NET40.dll</HintPath>
+		</Reference>
+		<Reference Include="NETSpam-NET40">
+			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETSpam-NET40.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
 
 </Project>

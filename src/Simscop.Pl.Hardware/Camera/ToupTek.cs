@@ -1,4 +1,8 @@
-﻿using OpenCvSharp;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Threading;
+using OpenCvSharp;
 using Simscop.Pl.Core.Services;
 using Size = Simscop.Pl.Core.Size;
 
@@ -11,10 +15,9 @@ public class ToupTek : ICameraService
 {
     private Toupcam? _camera = null;
 
-    public ToupTek()
-    {
-        Resolutions = new();
-    }
+    private bool _passCapture = true;
+
+    private bool _isCapture = false;
 
     public string Model { get; set; } = "none";
     public string SerialNumber { get; set; } = "none";
@@ -42,8 +45,9 @@ public class ToupTek : ICameraService
 
             return true;
         }
-        catch (Exception _)
+        catch (Exception e)
         {
+            LastErrorMessage = e.Message;
             return false;
         }
     }
@@ -57,6 +61,13 @@ public class ToupTek : ICameraService
 
         // note 当前只考虑多色模式
         var mode = _camera.MonoMode;
+        //Exposure = 1000;
+
+        // 获取范围
+        _camera.get_ExpTimeRange(out var min, out var max, out _);
+        ExposureRange = (min / 1000.0, max / 1000.0);
+
+
 
         return _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
     }
@@ -69,17 +80,37 @@ public class ToupTek : ICameraService
         // 图片到达
         if (evt == Toupcam.eEVENT.EVENT_IMAGE)
         {
-            var size = ImageSize;
-            var mat = new Mat(size.Height, size.Width, MatType.CV_8UC4);
+            if (SafeThreading is not null)
+                SafeThreading?.BeginInvoke(ImageEvent);
+            else ImageEvent();
+        }
+    }
 
-            try
-            {
-                var rec = _camera.PullImageV3(mat.Data, 0, 32, (int)mat.Step(), out var info);
+    void ImageEvent()
+    {
+        /* this run in the UI thread */
+        if (_camera == null) return;
 
-                if (rec) _currentImage = mat;
-            }
-            catch (Exception ex) { }
+        var size = ImageSize;
 
+        var mat = new Mat();
+        try
+        {
+            mat = new Mat(size.Height, size.Width, MatType.CV_8UC4);
+            var rec = _camera.PullImageV3(mat.Data, 0, 32, (int)mat.Step(), out var info);
+
+            if (!rec) return;
+            _currentImage = mat.Clone();
+            OnCaptureChanged?.Invoke(_currentImage);
+
+        }
+        catch (Exception ex)
+        {
+            LastErrorMessage = ex.Message;
+        }
+        finally
+        {
+            mat.Dispose();
         }
     }
 
@@ -91,7 +122,9 @@ public class ToupTek : ICameraService
         return true;
     }
 
-    private Mat _currentImage = new Mat();
+    public string? LastErrorMessage { get; private set; }
+
+    private Mat? _currentImage = new();
 
     public bool Capture(out Mat? img)
     {
@@ -100,19 +133,23 @@ public class ToupTek : ICameraService
 
         if (size.Width == 0 || size.Height == 0) return false;
 
+        //_currentImage = null;
+        //_passCapture = false;
+
+        //var exp = Exposure / 2;
+        //var count = 0;
+        //while (_currentImage is null || count++ < 4)
+        //    Thread.Sleep((int)exp);
+
         img = _currentImage.Clone();
+        GC.Collect();
+
+        _passCapture = true;
+
         return true;
     }
 
-    public (double Min, double Max) ExposureRange
-    {
-        get
-        {
-            if (_camera is null) return (-1, -1);
-            _camera.get_ExpTimeRange(out var min, out var max, out _);
-            return (min / 1000.0, max / 1000.0);
-        }
-    }
+    public (double Min, double Max) ExposureRange { get; private set; }
 
     public double Exposure
     {
@@ -125,10 +162,16 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null
-                || value > ExposureRange.Max
-                || value < ExposureRange.Min) return;
-            _camera.put_ExpoTime((uint)Math.Floor(value * 1000));
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null
+                    || value > ExposureRange.Max
+                    || value < ExposureRange.Min) return;
+
+                var exp = (uint)Math.Floor(value * 1000);
+                if (!_camera.put_ExpoTime(exp))
+                    throw new Exception();
+            });
         }
     }
 
@@ -144,10 +187,13 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null
-                || value > TemperatureRange.Max
-                || value < TemperatureRange.Min) return;
-            _camera.put_TempTint((int)value, (int)Tint);
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null
+                    || value > TemperatureRange.Max
+                    || value < TemperatureRange.Min) return;
+                _camera.put_TempTint((int)value, (int)Tint);
+            });
         }
     }
 
@@ -163,10 +209,13 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null
                 || value > TintRange.Max
                 || value < TintRange.Min) return;
-            _camera.put_TempTint((int)Temperature, (int)value);
+                _camera.put_TempTint((int)Temperature, (int)value);
+            });
         }
     }
     public double Gamma
@@ -179,11 +228,14 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null) return;
-            if (value is < -1 or > 1) value = 0;
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null) return;
+                if (value is < -1 or > 1) value = 0;
 
-            // 20~180 default:100
-            _camera.put_Gamma((int)Math.Floor(value * 80.0 + 100));
+                // 20~180 default:100
+                _camera.put_Gamma((int)Math.Floor(value * 80.0 + 100));
+            });
         }
     }
 
@@ -197,11 +249,14 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null) return;
-            if (value is < -1 or > 1) value = 0;
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null) return;
+                if (value is < -1 or > 1) value = 0;
 
-            // -100~100 default:0
-            _camera.put_Contrast((int)Math.Floor(value * 100));
+                // -100~100 default:0
+                _camera.put_Contrast((int)Math.Floor(value * 100));
+            });
         }
     }
 
@@ -215,11 +270,14 @@ public class ToupTek : ICameraService
         }
         set
         {
-            if (_camera is null) return;
-            if (value is < -1 or > 1) value = 0;
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null) return;
+                if (value is < -1 or > 1) value = 0;
 
-            // -64~64 default:0
-            _camera.put_Brightness((int)Math.Floor(value * 64));
+                // -64~64 default:0
+                _camera.put_Brightness((int)Math.Floor(value * 64));
+            });
         }
     }
 
@@ -265,18 +323,27 @@ public class ToupTek : ICameraService
 
         set
         {
-            if (_camera is null
-                || (value.Width == Resolution.Width
-                    && value.Height == Resolution.Height)) return;
-            var index = Resolutions.FindIndex(item => item.Width == value.Width
-                                                      && item.Height == value.Height);
+            SafeThreading?.BeginInvoke(() =>
+            {
+                if (_camera is null
+                    || (value.Width == Resolution.Width
+                        && value.Height == Resolution.Height)) return;
+                var index = Resolutions.FindIndex(item => item.Width == value.Width
+                                                          && item.Height == value.Height);
 
-            if (index < 0 || !_camera.Stop()) return;
+                if (index < 0 || !_camera.Stop()) return;
 
-            _camera.put_eSize((uint)index);
-            _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
+                _camera.Stop();
+                _camera.put_eSize((uint)index);
+
+                _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
+            });
         }
     }
 
-    public List<(uint Width, uint Height)> Resolutions { get; set; }
+    public List<(uint Width, uint Height)> Resolutions { get; set; } = new();
+
+    public event Action<Mat>? OnCaptureChanged;
+
+    public Dispatcher? SafeThreading { get; set; } = Application.Current.Dispatcher;
 }

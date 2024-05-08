@@ -208,7 +208,7 @@ namespace Simscop.Pl.Ui
                 Data = n,
                 Interpolate = false,
                 RenderMethod = HeatMapRenderMethod.Bitmap,
-                LabelFontSize = heatmap.LabelFontSize
+                LabelFontSize = heatmap.Rows > 50 || heatmap.Cols > 50 ? 0 : heatmap.LabelFontSize,
             };
 
             heatmap.RefreshSeries();
@@ -249,6 +249,15 @@ namespace Simscop.Pl.Ui
             _annotationTimer.Start();
         }
 
+        public static readonly DependencyProperty SelectedIndexProperty = DependencyProperty.Register(
+            nameof(SelectedIndex), typeof(System.Drawing.Point), typeof(HeatmapChart), new PropertyMetadata(default(System.Drawing.Point)));
+
+        public System.Drawing.Point SelectedIndex
+        {
+            get => (System.Drawing.Point)GetValue(SelectedIndexProperty);
+            set => SetValue(SelectedIndexProperty, value);
+        }
+
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
         {
             base.OnMouseDoubleClick(e);
@@ -265,9 +274,8 @@ namespace Simscop.Pl.Ui
             var y = AxisY.InverseTransform(pos.Y);
             var coorX = (int)Math.Floor(x);
             var coorY = (int)Math.Floor(y);
-            var v = Series.Data[coorX, coorY];
 
-            Debug.WriteLine($"{coorX} - {coorY} - {v}");
+            SelectedIndex = new System.Drawing.Point(coorX, coorY);
         }
 
         void UpdateTextAnnotation()

@@ -1,19 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using CommunityToolkit.Mvvm.Messaging;
+using Simscop.Pl.WPF.Managers;
 
 namespace Simscop.Pl.WPF.ViewModels;
 
 public partial class HeatmapViewModel : ObservableObject
 {
     [ObservableProperty]
-    private (int Row, int Column) _selected = new(-1, -1);
+    private int _cols = 0;
 
-    partial void OnSelectedChanged((int Row, int Column) value)
+    [ObservableProperty]
+    private int _rows = 0;
+
+    [ObservableProperty]
+    private Point _selected = new(-1, -1);
+
+    [ObservableProperty]
+    private double[,]? _array;
+
+    public HeatmapViewModel()
     {
-        // todo 发送消息修改曲线
+        WeakReferenceMessenger.Default.Register<Line2MapMessage>(this, (obj, msg) =>
+        {
+            Cols = msg.Columns;
+            Rows = msg.Rows;
+
+            Array = msg.Array;
+        });
     }
+
+    partial void OnSelectedChanged(Point value)
+        => WeakReferenceMessenger.Default.Send(new Map2LineMessage(value.Y, value.X));
 }

@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\test\Fake.Hardware\Fake.Hardware.csproj" />
     <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+    <ProjectReference Include="..\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
     <ProjectReference Include="..\Simscop.Pl.Ui\Simscop.Pl.Ui.csproj" />
   </ItemGroup>
 

@@ -21,6 +21,8 @@ public class FakeSpectrometer : ISpectrometerService
 
     public bool DeInitialize() => true;
 
+    public string? LastErrorMessage => null;
+
     public int Index { get; set; } = 0;
     public int BoxcarWidth { get; set; } = 0;
     public int IntegrationStepIncrement { get; } = 0;
@@ -47,6 +49,7 @@ public class FakeSpectrometer : ISpectrometerService
         var gaussian2 = Gaussian(x, mean2, stdDev2);
         return weight * gaussian1 + (1 - weight) * gaussian2;
     }
+
 
     public double[] GetSpectrum() => Enumerable.Range(0, NumberOfPixels).Select(item =>
     {

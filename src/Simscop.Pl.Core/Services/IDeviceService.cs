@@ -1,4 +1,6 @@
-﻿namespace Simscop.Pl.Core.Services;
+﻿using System.Windows.Threading;
+
+namespace Simscop.Pl.Core.Services;
 
 // todo 需要优化一下属性的限定域
 
@@ -46,4 +48,9 @@ public interface IDeviceService
     /// </summary>
     /// <returns></returns>
     public bool DeInitialize();
+
+    /// <summary>
+    /// 最后一个错误
+    /// </summary>
+    public string? LastErrorMessage { get; }
 }

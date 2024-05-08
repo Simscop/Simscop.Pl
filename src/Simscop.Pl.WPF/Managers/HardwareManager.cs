@@ -19,4 +19,29 @@ public static class HardwareManager
     /// 光谱仪
     /// </summary>
     public static ISpectrometerService? Spectrometer;
+
+    /// <summary>
+    /// 连接方案
+    /// </summary>
+    public static IOmniDriverService? OmniDriver;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsCameraOk = false;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsMotorOk = false;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsSpectrometerOk = false;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsAllOk => IsCameraOk && IsMotorOk && IsSpectrometerOk;
 }
