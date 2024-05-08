@@ -9,11 +9,8 @@ using Lift.UI.Data;
 
 namespace Simscop.Pl.WPF.Managers;
 
-
-
 public static class ToastManager
 {
-    
     public static void Success(string msg, int wait = 1)
         => Growl.Success(new GrowlInfo()
         {
@@ -65,5 +62,17 @@ public static class ToastManager
 
     [Conditional("DEBUG")]
     public static void Debug(string msg) => Warning(msg);
+
+    public static void RunAsString(string level, string msg)
+    {
+        var str = level.ToLower().Trim();
+
+        if (str.Contains("sucess")) Success(msg);
+        else if (str.Contains("info")) Info(msg);
+        else if (str.Contains("warning")) Warning(msg);
+        else if (str.Contains("error")) Error(msg);
+        else if (str.Contains("fatal")) Fatal(msg);
+        else return;
+    }
 
 }

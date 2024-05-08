@@ -5,6 +5,7 @@ using System.Windows.Media;
 using Fake.Hardware;
 using Lift.UI.Controls;
 using Simscop.Pl.Core;
+using Simscop.Pl.Hardware;
 using Simscop.Pl.Hardware.Camera;
 using Simscop.Pl.WPF.Views;
 using Simscop.Pl.WPF.Views.MessageBox;
@@ -18,13 +19,32 @@ public partial class App : Application
 {
     public App()
     {
-        HardwareManager.Motor = new FakeMortor();
-        HardwareManager.Camera = new ToupTek();
-        HardwareManager.Spectrometer = new FakeSpectrometer();
-        HardwareManager.OmniDriver = new FakeOmniDriver();
+
         //DispatcherUnhandledException += App_DispatcherUnhandledException;
         //TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
         //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+    }
+
+    void Fake()
+    {
+        HardwareManager.Motor = new FakeMortor();
+        HardwareManager.Camera = new FakeCamera()
+        {
+            //SafeThreading = Application.Current.Dispatcher,
+        };
+        HardwareManager.Spectrometer = new FakeSpectrometer();
+        HardwareManager.OmniDriver = new FakeOmniDriver();
+
+        HardwareManager.IsCameraOk = true;
+        HardwareManager.IsMotorOk = true;
+
+    }
+
+    void Initialize()
+    {
+        HardwareManager.Motor = new Hardware.Zaber();
+        HardwareManager.Camera = new ToupTek();
+        HardwareManager.OmniDriver = new OmniManager();
     }
 
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -48,14 +68,27 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        var main = new MainWindow()
-        {
-            Background = Brushes.White,
+        //var isFake = true;
 
-        };
+        //if (isFake)
+        //{
+        //    Fake();
+        //    var main = new MainWindow()
+        //    {
+        //        Background = Brushes.White,
+
+        //    };
+        //    main.Show();
+        //}
+        //else
+        //{
+        //    Initialize();
+        //    var main = new Splash();
+        //    main.Show();
+        //}
+
+        Fake();
+        var main = new Splash();
         main.Show();
-
-        HardwareManager.Camera.Valid();
-        HardwareManager.Camera.Initialize();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using Lift.Core.Share.Extensions;
 using Simscop.Pl.Core.Services;
 
@@ -38,6 +39,30 @@ public class FakeMortor : IMotorService
         if (index[2]) Z = pos[2];
     }
 
+    public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() =>
+    {
+
+
+        try
+        {
+            if (index.Length != 3 || pos.Length != 3) throw new Exception();
+
+            Thread.Sleep(1000);
+
+            if (index[0]) X = pos[0];
+            if (index[1]) Y = pos[1];
+            if (index[2]) Z = pos[2];
+
+            throw new Exception();
+        }
+        catch (Exception _)
+        {
+            WeakReferenceMessenger.Default.Send("超出移动范围", "ToastWarning");
+        }
+
+    });
+
+
     public void SetAbsolutePosition(bool[] index, double[] pos)
     {
         if (index.Length != 3 || pos.Length != 3) throw new Exception();
@@ -47,4 +72,17 @@ public class FakeMortor : IMotorService
         if (index[2]) Z = pos[2];
 
     }
+
+    public Task AsyncSetAbsolutePosition(bool[] index, double[] pos) => Task.Run(() =>
+    {
+        if (index.Length != 3 || pos.Length != 3) throw new Exception();
+
+        Thread.Sleep(1000);
+
+        if (index[0]) X = pos[0];
+        if (index[1]) Y = pos[1];
+        if (index[2]) Z = pos[2];
+
+        WeakReferenceMessenger.Default.Send("超出移动范围", "ToastWarning");
+    });
 }

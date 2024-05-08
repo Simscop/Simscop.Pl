@@ -1,4 +1,6 @@
-﻿using OpenCvSharp;
+﻿using System.Windows;
+using OpenCvSharp;
+using System.Windows.Threading;
 
 namespace Simscop.Pl.Core.Services;
 
@@ -148,4 +150,9 @@ public interface ICameraService : IDeviceService
     /// 当捕获结果刷新
     /// </summary>
     public event Action<Mat> OnCaptureChanged;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Dispatcher? SafeThreading { get; set; }
 }

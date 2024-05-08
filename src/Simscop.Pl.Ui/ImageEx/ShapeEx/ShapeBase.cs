@@ -74,22 +74,22 @@ public abstract class ShapeBase : Shape
     /// <summary>
     /// 常规状态宽度
     /// </summary>
-    public double ThicknessNormal { get; set; } = 5;
+    public double ThicknessNormal { get; set; } = 0;
 
     /// <summary>
     /// 鼠标放上去后线宽
     /// </summary>
-    public double ThicknessMouseOver { get; set; } = 8;
+    public double ThicknessMouseOver { get; set; } = 0;
 
     /// <summary>
     /// 选择后线宽
     /// </summary>
-    public double ThicknessSelected { get; set; } = 10;
+    public double ThicknessSelected { get; set; } = 0;
 
     /// <summary>
     /// 
     /// </summary>
-    public double ThicknessMouseOverAndSelected { get; set; } = 15;
+    public double ThicknessMouseOverAndSelected { get; set; } = 0;
 
     /// <summary>
     /// 

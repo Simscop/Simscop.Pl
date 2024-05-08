@@ -8,12 +8,13 @@
     xmlns:liftui="https://github.com/pchuan98/Lift.UI"
     xmlns:local="clr-namespace:Simscop.Pl.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
     xmlns:vm="clr-namespace:Simscop.Pl.WPF.ViewModels"
-    Width="1300"
+    Width="1400"
     Height="800"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
-    SystemBackdropType="Mica"
+    Topmost="True"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>
@@ -36,13 +37,17 @@
         </StackPanel>
     </liftui:Window.NonClientAreaContent>
 
+    <liftui:Window.Resources>
+        <sys:Boolean x:Key="TrueValue">True</sys:Boolean>
+        <sys:Boolean x:Key="FalseValue">False</sys:Boolean>
+    </liftui:Window.Resources>
+
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar
                 x:Name="VisibleBar"
                 Margin="10,0"
                 Padding="10"
-                BandIndex="1"
                 Header="Visible"
                 OverflowMode="Never">
                 <CheckBox
@@ -57,6 +62,101 @@
                     Margin="10,0"
                     Content="GridChart"
                     IsChecked="{Binding Visibility, ElementName=Heatmap, Mode=TwoWay, Converter={converters:BoolVisibleConverter}}" />
+            </ToolBar>
+            <ToolBar
+                x:Name="MotorBar"
+                Margin="10,0"
+                Padding="10"
+                d:DataContext="{d:DesignInstance vm:MotorViewModel}"
+                Header="Motor"
+                OverflowMode="Never">
+                <UniformGrid Columns="3">
+                    <TextBox
+                        Width="150"
+                        Margin="0,0,5,0"
+                        VerticalAlignment="Center"
+                        liftui:InfoElement.Title="X(um)"
+                        liftui:InfoElement.TitlePlacement="Left"
+                        IsReadOnly="True"
+                        Style="{DynamicResource TextBoxExtend}"
+                        Text="{Binding X, StringFormat={}{0:F2}}" />
+                    <TextBox
+                        Margin="0,0,5,0"
+                        VerticalAlignment="Center"
+                        liftui:InfoElement.Title="Y(um)"
+                        liftui:InfoElement.TitlePlacement="Left"
+                        IsReadOnly="True"
+                        Style="{DynamicResource TextBoxExtend}"
+                        Text="{Binding Y, StringFormat={}{0:F2}}" />
+                    <TextBox
+                        Margin="0,0,5,0"
+                        VerticalAlignment="Center"
+                        liftui:InfoElement.Title="Z(um)"
+                        liftui:InfoElement.TitlePlacement="Left"
+                        IsReadOnly="True"
+                        Style="{DynamicResource TextBoxExtend}"
+                        Text="{Binding Z, StringFormat={}{0:F2}}" />
+                </UniformGrid>
+            </ToolBar>
+            <ToolBar
+                x:Name="MotorSettingBar"
+                Margin="10,0"
+                Padding="10"
+                d:DataContext="{d:DesignInstance vm:MotorViewModel}"
+                OverflowMode="Never">
+                <liftui:ButtonGroup Margin="0,0,10,0" Style="{DynamicResource ButtonGroupSolid}">
+                    <RadioButton Content="X" IsChecked="{Binding Axis, Converter={converters:EnumBoolConverter}, ConverterParameter={x:Static vm:MotorAxis.X}}" />
+                    <RadioButton Content="Y" IsChecked="{Binding Axis, Converter={converters:EnumBoolConverter}, ConverterParameter={x:Static vm:MotorAxis.Y}}" />
+                    <RadioButton Content="Z" IsChecked="{Binding Axis, Converter={converters:EnumBoolConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}" />
+                </liftui:ButtonGroup>
+                <Grid>
+                    <liftui:NumericUpDown
+                        Width="100"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.X}}"
+                        Value="{Binding IntervalX}" />
+                    <liftui:NumericUpDown
+                        Width="100"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Y}}"
+                        Value="{Binding IntervalY}" />
+                    <liftui:NumericUpDown
+                        Width="100"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}"
+                        Value="{Binding IntervalZ}" />
+                </Grid>
+                <Grid Margin="5,0,0,0">
+                    <Button
+                        Command="{Binding AsyncMoveXCommand}"
+                        CommandParameter="{StaticResource TrueValue}"
+                        Content="🔼"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.X}}" />
+                    <Button
+                        Command="{Binding AsyncMoveYCommand}"
+                        CommandParameter="{StaticResource TrueValue}"
+                        Content="🔼"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Y}}" />
+                    <Button
+                        Command="{Binding AsyncMoveZCommand}"
+                        CommandParameter="{StaticResource TrueValue}"
+                        Content="🔼"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}" />
+                </Grid>
+                <Grid Margin="1,0">
+                    <Button
+                        Command="{Binding AsyncMoveXCommand}"
+                        CommandParameter="{StaticResource FalseValue}"
+                        Content="🔽"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.X}}" />
+                    <Button
+                        Command="{Binding AsyncMoveYCommand}"
+                        CommandParameter="{StaticResource FalseValue}"
+                        Content="🔽"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Y}}" />
+                    <Button
+                        Command="{Binding AsyncMoveZCommand}"
+                        CommandParameter="{StaticResource FalseValue}"
+                        Content="🔽"
+                        Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}" />
+                </Grid>
             </ToolBar>
         </ToolBarTray>
         <StatusBar Height="32" DockPanel.Dock="Bottom" />

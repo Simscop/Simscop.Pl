@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using OpenCvSharp;
 using Size = System.Windows.Size;
 using Rect = System.Windows.Rect;
@@ -30,6 +24,7 @@ public class AcquireRamanDataMessage { }
 
 /// <summary>
 /// 标记信息请求
+/// Rect为左上点和矩形尺寸
 /// </summary>
 public class MarkderInfoRequestMessage : RequestMessage<Rect> { }
 
@@ -58,3 +53,16 @@ public record Map2LineMessage(int Rows, int Columns);
 /// 更新曲线的显示
 /// </summary>
 public record LineChangedMessage(List<(double X, double Y)> Points);
+
+public static class ToastMessage
+{
+    public const string ToastSucess = nameof(ToastSucess);
+
+    public const string ToastInfo = nameof(ToastInfo);
+
+    public const string ToastWarning = nameof(ToastWarning);
+
+    public const string ToastError = nameof(ToastError);
+
+    public const string ToastFatal = nameof(ToastFatal);
+}

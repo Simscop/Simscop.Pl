@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System.Globalization;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using OpenCvSharp.WpfExtensions;
 using OxyPlot;
@@ -21,8 +21,13 @@ namespace Simscop.Pl.WPF;
 /// </summary>
 public partial class MainWindow
 {
+    private Rect _markRect = new();
 
-    private System.Windows.Rect _markRect = new();
+    private DispatcherTimer _cameraTimer;
+
+    private int _frame = 0;
+
+    private bool _isRender = false;
 
     public MainWindow()
     {
@@ -34,24 +39,21 @@ public partial class MainWindow
 
         DataContext = VmManager.MainViewModel;
 
-        //Task.Run(() =>
-        //{
-        //    while (true)
-        //    {
-        //        var mat = WeakReferenceMessenger.Default.Send<CaptureRequestMessage>().Response;
-
-        //        if (mat is not null)
-        //            Application.Current.Dispatcher.BeginInvoke(() =>
-        //            {
-        //                ImageViewer.ImageSource = mat.ToBitmapSource();
-        //            });
-
-        //        Thread.Sleep(10);
-        //    }
-        //});
+        _cameraTimer = new DispatcherTimer(priority: DispatcherPriority.Render)
+        {
+            Interval = TimeSpan.FromSeconds(3)
+        };
 
         RegisterInvoke();
         RegisterMessage();
+        RegisterViewModel();
+    }
+
+    private void RegisterViewModel()
+    {
+        MotorBar.DataContext = VmManager.MotorViewModel;
+        MotorSettingBar.DataContext = VmManager.MotorViewModel;
+        VmManager.MotorViewModel.StartTimer();
     }
 
     private void RegisterInvoke()
@@ -70,11 +72,29 @@ public partial class MainWindow
         {
             msg.Reply(_markRect);
         });
+
+        new List<string>()
+        {
+            ToastMessage.ToastSucess,
+            ToastMessage.ToastInfo,
+            ToastMessage.ToastWarning,
+            ToastMessage.ToastError,
+            ToastMessage.ToastFatal
+        }.ForEach(item =>
+        {
+            WeakReferenceMessenger.Default.Register<string, string>(this, item, (obj, msg) =>
+            {
+                ToastManager.RunAsString(item, msg);
+            });
+        });
     }
 
     protected override void OnRender(DrawingContext drawingContext)
     {
         base.OnRender(drawingContext);
+
+        if (_isRender) return;
+        _isRender = true;
 
         Heatmap.DataContext = VmManager.HeatmapViewModel;
         Line.DataContext = VmManager.LineChartViewModel;
@@ -112,25 +132,30 @@ public partial class MainWindow
         Line.SetBinding(LineChart.SelectedXProperty, new Binding("Selected") { Source = VmManager.LineChartViewModel, Mode = BindingMode.TwoWay });
 
         //HardwareManager.Camera!.IsAutoExposure = false;
-      
-        HardwareManager.Camera!.OnCaptureChanged += img =>
+
+        if (HardwareManager.IsCameraOk)
         {
-            Task.Run(() =>
+            HardwareManager.Camera!.IsAutoExposure = false;
+            HardwareManager.Camera.Resolution = HardwareManager.Camera.Resolutions[2];
+
+            _cameraTimer.Tick += (_, _) =>
             {
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    var source = img.ToBitmapSource();
-                    ImageViewer.ImageSource = source;
+                VmManager.CameraViewModel.FirstInit();
 
-                    Debug.WriteLine($"{source.Width} - {source.Height}");
-                    //GC.Collect();
-                });
+                VmManager.CameraViewModel.Frame = _frame / 3.0;
 
-            });
+                _frame = 0;
+            };
 
-          
-            Debug.WriteLine($"{HardwareManager.Camera.Exposure}");
-        };
+            _cameraTimer.Start();
+
+            HardwareManager.Camera!.OnCaptureChanged += img =>
+            {
+                var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                ImageViewer.ImageSource = source;
+                _frame++;
+            };
+        }
     }
 
     private void MainChildVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

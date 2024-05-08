@@ -39,4 +39,9 @@ public static class HardwareManager
     /// 
     /// </summary>
     public static bool IsSpectrometerOk = false;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsAllOk => IsCameraOk && IsMotorOk && IsSpectrometerOk;
 }

@@ -23,7 +23,16 @@ public partial class CameraViewModel : ObservableObject
                                    ?? throw new NotImplementedException("The Camera not implemented.");
 
     [PropertyGrid(Ignore = true)]
-    public List<(uint Width, uint Height)>? Resolutions;
+    [ObservableProperty]
+    public List<(uint Width, uint Height)>? _resolutions;
+
+    [PropertyGrid(Ignore = true)]
+    public int ResolutionIndex
+    {
+        get => Camera.Resolutions.FindIndex(item => item == Camera.Resolution);
+        set => SetProperty(Camera.Resolutions.FindIndex(item => item == Camera.Resolution)
+            , value, (_) => Camera.Resolution = Camera.Resolutions[value]);
+    }
 
     public CameraViewModel()
     {
@@ -36,7 +45,7 @@ public partial class CameraViewModel : ObservableObject
         });
     }
 
-    [Range(10, 10000)]
+    [Range(0.244, 15000)]
     [PropertyGrid(Delay = 1000)]
     public double Exposure
     {
@@ -44,7 +53,7 @@ public partial class CameraViewModel : ObservableObject
         set => SetProperty(Camera.Exposure, value, (_) => Camera.Exposure = value);
     }
 
-    [Range(10, 10000)]
+    [Range(2000, 15000)]
     public double Temperature
     {
         get => Camera.Temperature;
@@ -85,9 +94,10 @@ public partial class CameraViewModel : ObservableObject
         set => SetProperty(Camera.IsAutoLevel, value, (_) => Camera.IsAutoLevel = value);
     }
 
+    // todo 要自动更新Exposure
     public bool IsAutoExposure
     {
-        get => Camera.IsAutoLevel;
+        get => Camera.IsAutoExposure;
         set => SetProperty(Camera.IsAutoExposure, value, (_) => Camera.IsAutoExposure = value);
     }
 
@@ -112,8 +122,32 @@ public partial class CameraViewModel : ObservableObject
         set => SetProperty(Camera.IsFlipVertially, value, (_) => Camera.IsFlipVertially = value);
     }
 
-    [ObservableProperty]
-    private int _resolutionIndex = 0;
-
     #endregion
+
+    [PropertyGrid(Ignore = true)]
+    private bool _flag = false;
+
+    public void FirstInit()
+    {
+        if (!_flag)
+        {
+            Resolutions = Camera.Resolutions;
+            _flag = true;
+        }
+
+
+        Exposure = Camera!.Exposure;
+        Temperature = Camera.Temperature;
+        Tint = Camera.Tint;
+        Gamma = Camera.Gamma;
+        Contrast = Camera.Contrast;
+        Brightness = Camera.Brightness;
+        IsAutoLevel = Camera.IsAutoLevel;
+        IsAutoExposure = Camera.IsAutoExposure;
+        ClockwiseRotation = Camera.ClockwiseRotation;
+        IsFlipHorizontally = Camera.IsFlipHorizontally;
+        IsFlipVertially = Camera.IsFlipVertially;
+        IsFlipVertially = Camera.IsFlipVertially;
+        ResolutionIndex = Camera.Resolutions.FindIndex(item => item == Camera.Resolution);
+    }
 }

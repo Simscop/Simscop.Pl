@@ -33,7 +33,7 @@ public class OmniManager : IOmniDriverService
     {
         HardwareVersion = Wrapper.getApiVersion();
 
-        return false;
+        return true;
     }
 
     /// <inheritdoc />

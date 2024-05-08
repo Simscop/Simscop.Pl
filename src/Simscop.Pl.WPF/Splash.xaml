@@ -37,24 +37,38 @@
         </Storyboard>
     </liftui:Window.Resources>
 
-    <DockPanel>
+    <Grid x:Name="GridMain">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
         <Viewbox
+            Grid.Column="0"
             Height="100"
             Margin="40,20,40,20"
             Stretch="Uniform">
             <liftui:LoadingCircle
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                DockPanel.Dock="Left"
+                x:Name="LoadingCircle"
                 DotDiameter="4"
                 DotSpeed="5" />
         </Viewbox>
 
+        <Viewbox
+            Grid.Column="0"
+            Height="100"
+            Margin="40,20"
+            Stretch="Uniform">
+            <TextBlock
+                x:Name="TbResult"
+                FontWeight="Bold"
+                Text="" />
+        </Viewbox>
+
         <StackPanel
             x:Name="Panel"
-            Margin="20,10,10,10"
-            DockPanel.Dock="Right">
+            Grid.Column="1"
+            Margin="20,10,10,10">
 
             <TextBlock
                 x:Name="Camera"
@@ -113,5 +127,5 @@
                 </TextBlock.RenderTransform>
             </TextBlock>
         </StackPanel>
-    </DockPanel>
+    </Grid>
 </liftui:Window>

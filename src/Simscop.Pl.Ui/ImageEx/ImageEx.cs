@@ -43,6 +43,8 @@ public class ImageExViewerBehavior : Behavior<ImageEx>
 
         if (oldScale <= 0) return;
 
+        // bug 放缩在default级别
+
         // 放大倍数使用放大十倍以内为0.1，当大100倍以内为1，以此内推
         var scale = Math.Log10(AssociatedObject.ImagePanelScale / AssociatedObject.DefaultImagePanelScale);
 

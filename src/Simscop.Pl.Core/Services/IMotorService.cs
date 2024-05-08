@@ -46,11 +46,27 @@ public interface IMotorService : IDeviceService
     /// <param name="index"></param>
     /// <param name="pos"></param>
     public void SetRelativePosition(bool[] index, double[] pos);
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public Task AsyncSetRelativePosition(bool[] index, double[] pos);
+
     /// <summary>
     /// 设置绝对位置
     /// </summary>
     /// <param name="index"></param>
     /// <param name="pos"></param>
     public void SetAbsolutePosition(bool[] index, double[] pos);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    public Task AsyncSetAbsolutePosition(bool[] index, double[] pos);
 }

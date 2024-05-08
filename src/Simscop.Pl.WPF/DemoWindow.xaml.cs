@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
+using Simscop.Pl.Hardware.Camera;
 using Simscop.Pl.Ui.ImageEx;
 
 namespace Simscop.Pl.WPF
@@ -15,29 +19,23 @@ namespace Simscop.Pl.WPF
         {
             InitializeComponent();
 
-            var mat = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif", ImreadModes.Unchanged);
-            Image.ImageSource = mat.ToBitmapSource();
 
-            Debug.WriteLine($"{mat.Channels()} - {mat.Depth()}");
+            var camera = new ToupTek();
 
-            Image.OnMarkderChanged += (r) =>
+            Debug.WriteLine($"{camera.Valid() && camera.Initialize()}");
+
+            camera.Exposure = 1000;
+
+            camera.OnCaptureChanged += mat =>
             {
-                Debug.WriteLine(r);
+
+                Image.ImageSource = mat.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+
             };
 
-            Image.GetImageColorFromPosition = (x, y) =>
-            {
-                if (x < 0 || y < 0) return Colors.Transparent;
-
-                var vec = mat.At<Vec3b>(y, x);
-                var color = Color.FromArgb(255, vec.Item2, vec.Item1, vec.Item0);
-
-                Image.Background = new SolidColorBrush(color);
-
-                return color;
-            };
-
-        
+            
         }
+
+
     }
 }

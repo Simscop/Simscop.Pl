@@ -1,4 +1,6 @@
-﻿namespace Simscop.Pl.Core.Services;
+﻿using System.Windows.Threading;
+
+namespace Simscop.Pl.Core.Services;
 
 // todo 需要优化一下属性的限定域
 
