@@ -108,7 +108,5 @@
                 TextAlignment="Left"
                 TextWrapping="Wrap" />
         </Grid>
-
-
     </StackPanel>
 </liftui:Window>

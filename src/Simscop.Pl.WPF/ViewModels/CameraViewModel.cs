@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Fake.Hardware;
 using Lift.Core.Exception;
 using Lift.UI.V2.Controls.PropertyGrid;
+using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Simscop.Pl.Core;
 using Simscop.Pl.Core.Services;
@@ -14,7 +16,14 @@ namespace Simscop.Pl.WPF.ViewModels;
 
 public partial class CameraViewModel : ObservableObject
 {
+    [PropertyGrid(Ignore = true)]
     public static IMessenger Messager = WeakReferenceMessenger.Default;
+
+    [PropertyGrid(Ignore = true)]
+    public Mat? MarkImg { get; private set; }
+
+    [PropertyGrid(Ignore = true)]
+    public Mat? Image { get; set; }
 
     #region 硬件部分
 
@@ -40,7 +49,6 @@ public partial class CameraViewModel : ObservableObject
         {
             if (msg.HasReceivedResponse)
                 throw new InvalidException("The message has been done.");
-
             msg.Reply(Camera.Capture(out var img) ? img : null);
         });
     }
@@ -134,8 +142,6 @@ public partial class CameraViewModel : ObservableObject
             Resolutions = Camera.Resolutions;
             _flag = true;
         }
-
-
         Exposure = Camera!.Exposure;
         Temperature = Camera.Temperature;
         Tint = Camera.Tint;
@@ -150,4 +156,30 @@ public partial class CameraViewModel : ObservableObject
         IsFlipVertially = Camera.IsFlipVertially;
         ResolutionIndex = Camera.Resolutions.FindIndex(item => item == Camera.Resolution);
     }
+
+    public void UpdateMarkImg(System.Windows.Rect rect)
+    {
+        if (Image is null || Image.Rows == 0 || Image.Cols == 0) return;
+
+        MarkImg = new Mat(Image, new Rect((int)rect.Left, (int)rect.Top, (int)rect.Width,
+            (int)rect.Height)).Clone();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [RelayCommand]
+    private void BlanceWhite() => Camera.AutoWhiteBlanceOnce();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [RelayCommand]
+    private void StartCapture() => Camera.StartCapture();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [RelayCommand]
+    private void StopCapture() => Camera.StopCapture();
 }

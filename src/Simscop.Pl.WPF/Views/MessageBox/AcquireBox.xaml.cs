@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
+using Window = Lift.UI.Controls.Window;
 
 namespace Simscop.Pl.WPF.Views.MessageBox;
 
 /// <summary>
 /// Interaction logic for AcquireBox.xaml
 /// </summary>
-public partial class AcquireBox
+public partial class AcquireBox : Window
 {
     public AcquireBox()
     {

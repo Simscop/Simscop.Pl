@@ -20,6 +20,24 @@ public interface ICameraService : IDeviceService
     public bool Capture(out Mat? img);
 
     /// <summary>
+    /// 执行一次相机自动白平衡
+    /// </summary>
+    /// <returns></returns>
+    public bool AutoWhiteBlanceOnce();
+
+    /// <summary>
+    /// 开始采集数据
+    /// </summary>
+    /// <returns></returns>
+    public bool StartCapture();
+
+    /// <summary>
+    /// 停止捕获数据
+    /// </summary>
+    /// <returns></returns>
+    public bool StopCapture();
+
+    /// <summary>
     /// 曝光范围
     /// </summary>
     public (double Min, double Max) ExposureRange { get; }

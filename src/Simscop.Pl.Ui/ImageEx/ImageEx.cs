@@ -264,6 +264,9 @@ public class ImageEx : ContentControl
     /// </summary>
     public const string ZoomScale = "ZoomScale";
 
+    /// <summary>
+    /// 标记命令
+    /// </summary>
     public static readonly RoutedUICommand MarkerCommand = new();
 
     #endregion
@@ -294,20 +297,35 @@ public class ImageEx : ContentControl
         _behaviors.Add(new ImageExViewerBehavior());
         _behaviors.Add(new ImageExDrawBehavior());
 
-        //ShapeCollection.CollectionChanged += (_, _) =>
-        //{
-        //    if (Canvas is null) return;
-
-        //    // append
-        //    ShapeCollection.SkipWhile(item => Canvas.Children.Contains(item)).ForEach(item => item.Draw(Canvas));
-        //};
-
         CommandBindings.Add(new CommandBinding(MarkerCommand, (obj, args) =>
         {
             if (args.Parameter is not string command || ShapeMarker is null) return;
-
             if (command == Delete) ShapeMarker.Visibility = Visibility.Collapsed;
-            else if (command == ZoomScale) return;
+            else if (command == ZoomScale)
+            {
+                // zoom the 90% width or height
+                var marker = ShapeMarker;
+                var start = marker.PointStart;
+                var end = marker.PointEnd;
+
+                var location = new Point(Math.Min(start.X, end.X), Math.Min(start.Y, end.Y));
+                var center = (location.X + ShapeMarker.Width / 2, location.Y + ShapeMarker.Height / 2);
+
+                var width = ShapeMarker.Width * DefaultImagePanelScale;
+                var height = ShapeMarker.Height * DefaultImagePanelScale;
+
+                var scaleX = ActualWidth * 0.9 / width;
+                var scaleY = ActualHeight * 0.9 / height;
+
+                var scale = Math.Min(scaleX, scaleY);
+                ImagePanelScale = scale * DefaultImagePanelScale;
+
+                var offsetX = center.Item1 * ImagePanelScale - ActualWidth / 2;
+                var offsetY = center.Item2 * ImagePanelScale - ActualHeight / 2;
+
+                Scroll?.ScrollToHorizontalOffset(offsetX);
+                Scroll?.ScrollToVerticalOffset(offsetY);
+            }
             else throw new NotImplementedException();
         }));
     }
@@ -466,5 +484,11 @@ public class ImageEx : ContentControl
             ActualHeight / ImageSource.Height);
 
         DefaultImageSize = (ImageSource.Width, ImageSource.Height);
+    }
+
+    protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
+    {
+        // todo 双击事件
+        var pos = e.GetPosition(Canvas);
     }
 }

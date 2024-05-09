@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Threading;
 using OpenCvSharp;
 using Simscop.Pl.Core.Services;
@@ -66,7 +64,6 @@ public class ToupTek : ICameraService
         // 获取范围
         _camera.get_ExpTimeRange(out var min, out var max, out _);
         ExposureRange = (min / 1000.0, max / 1000.0);
-
 
 
         return _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
@@ -148,6 +145,12 @@ public class ToupTek : ICameraService
 
         return true;
     }
+
+    public bool AutoWhiteBlanceOnce() => _camera?.AwbOnce() ?? false;
+
+    public bool StartCapture() => _camera?.StartPullModeWithCallback(new(DelegateOnEventCallback)) ?? false;
+
+    public bool StopCapture() => _camera?.Stop() ?? false;
 
     public (double Min, double Max) ExposureRange { get; private set; }
 

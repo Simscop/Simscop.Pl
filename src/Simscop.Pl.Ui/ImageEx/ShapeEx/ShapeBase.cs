@@ -41,7 +41,7 @@ public abstract class ShapeBase : Shape
     /// <summary>
     /// 是否被选中
     /// </summary>
-    public bool IsSelected { get; protected set; }
+    public bool IsSelected { get; protected set; } = true;
 
     /// <summary>
     /// 切换选中状态
@@ -74,22 +74,22 @@ public abstract class ShapeBase : Shape
     /// <summary>
     /// 常规状态宽度
     /// </summary>
-    public double ThicknessNormal { get; set; } = 0;
+    public double ThicknessNormal { get; set; } = 1;
 
     /// <summary>
     /// 鼠标放上去后线宽
     /// </summary>
-    public double ThicknessMouseOver { get; set; } = 0;
+    public double ThicknessMouseOver { get; set; } = 1;
 
     /// <summary>
     /// 选择后线宽
     /// </summary>
-    public double ThicknessSelected { get; set; } = 0;
+    public double ThicknessSelected { get; set; } = 1;
 
     /// <summary>
     /// 
     /// </summary>
-    public double ThicknessMouseOverAndSelected { get; set; } = 0;
+    public double ThicknessMouseOverAndSelected { get; set; } = 1;
 
     /// <summary>
     /// 
@@ -103,13 +103,14 @@ public abstract class ShapeBase : Shape
     {
         ThicknessNormal = StrokeThickness;
 
-        MouseEnter += (_, _) => RefreshStrokeThickness();
-        MouseLeave += (_, _) => RefreshStrokeThickness();
+        //MouseEnter += (_, _) => RefreshStrokeThickness();
+        //MouseLeave += (_, _) => RefreshStrokeThickness();
         MouseDown += (_, e) =>
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
-                SetSelected();
+            //if (e.LeftButton == MouseButtonState.Pressed)
+            //    SetSelected();
         };
+
     }
 
     /// <summary>
@@ -148,20 +149,6 @@ public abstract class ShapeBase : Shape
     protected override Geometry DefiningGeometry
         => throw new NotImplementedException();
 
-}
-
-class TestShape : ShapeBase
-{
-    public override void Draw(InkCanvas canvas)
-    {
-        IsSelected = false;
-        throw new NotImplementedException();
-    }
-
-    internal override ShapeBase Clone()
-    {
-        throw new NotImplementedException();
-    }
 }
 
 public class RectangleShape : ShapeBase

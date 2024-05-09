@@ -5,6 +5,7 @@ using System.Windows.Media;
 using Lift.UI.Tools.Extension;
 using Simscop.Pl.Core.Models.Charts;
 using Simscop.Pl.WPF.Helpers;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Simscop.Pl.WPF.UserControls
 {

@@ -14,7 +14,7 @@
     Width="1400"
     Height="800"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
-    Topmost="True"
+    Topmost="False"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>
@@ -25,6 +25,7 @@
                 FontWeight="Bold"
                 Text="Simscop.Pl" />
             <Menu Margin="20,0,0,0" VerticalAlignment="Center">
+                <MenuItem Click="SaveMenuClicked" Header="Save" />
                 <MenuItem
                     VerticalAlignment="Center"
                     Click="OnCameraSettingViewClicked"
@@ -187,7 +188,10 @@
                         <imageEx:ImageEx.MarkerMenu>
                             <ContextMenu>
                                 <MenuItem Command="{Binding AcquireRamanDataCommand}" Header="Acquire" />
-                                <MenuItem Header="Scale" IsEnabled="False" />
+                                <MenuItem
+                                    Command="imageEx:ImageEx.MarkerCommand"
+                                    CommandParameter="{x:Static imageEx:ImageEx.ZoomScale}"
+                                    Header="Scale" />
                                 <MenuItem
                                     Command="imageEx:ImageEx.MarkerCommand"
                                     CommandParameter="{x:Static imageEx:ImageEx.Delete}"

@@ -1,6 +1,7 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,13 +14,14 @@ using Simscop.Pl.Ui.Extensions;
 using Simscop.Pl.WPF.Managers;
 using Simscop.Pl.WPF.Views;
 using Simscop.Pl.WPF.Views.MessageBox;
+using Window = Lift.UI.Controls.Window;
 
 namespace Simscop.Pl.WPF;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow
+public partial class MainWindow : Window
 {
     private Rect _markRect = new();
 
@@ -58,7 +60,11 @@ public partial class MainWindow
 
     private void RegisterInvoke()
     {
-        ImageViewer.OnMarkderChanged += (rect) => _markRect = rect;
+        ImageViewer.OnMarkderChanged += (rect) =>
+        {
+            _markRect = rect;
+            VmManager.CameraViewModel.UpdateMarkImg(rect);
+        };
     }
 
     private void RegisterMessage()
@@ -151,7 +157,9 @@ public partial class MainWindow
 
             HardwareManager.Camera!.OnCaptureChanged += img =>
             {
-                var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                VmManager.CameraViewModel.Image = img.Clone();
+                //var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                var source = img.ToWriteableBitmap();
                 ImageViewer.ImageSource = source;
                 _frame++;
             };
@@ -218,4 +226,40 @@ public partial class MainWindow
         };
         view.Show();
     }
+
+    private void SaveMenuClicked(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveDataDialog()
+        {
+            DataContext = DataContext
+        };
+        //SetCenterWith(dialog);
+
+        dialog.ShowDialog();
+    }
+
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="obj"></param>
+    ///// <param name="window"></param>
+    //public void SetCenterWith(Window window)
+    //{
+    //    var obj = this;
+    //    var windowHandle = new WindowInteropHelper(window).Handle;
+    //    var screen = Screen.FromHandle(windowHandle);
+
+    //    Debug.WriteLine($"{window.WindowState}  {screen.Bounds}");
+
+    //    var top = window.WindowState == WindowState.Maximized
+    //        ? screen.Bounds.Top + (screen.Bounds.Height - obj.Height) / 2
+    //        : window.Top + (window.ActualHeight - obj.Height) / 2;
+
+    //    var left = window.WindowState == WindowState.Maximized
+    //        ? screen.Bounds.Left + (screen.Bounds.Width - obj.Width) / 2
+    //        : window.Left - (obj.Width - window.ActualWidth) / 2;
+
+    //    obj.Top = top;
+    //    obj.Left = left;
+    //}
 }
