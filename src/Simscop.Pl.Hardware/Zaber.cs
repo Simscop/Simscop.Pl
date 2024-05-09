@@ -43,8 +43,11 @@ public class Zaber : IMotorService
         _yAxis = GetAxis(YCom);
         _zAxis = GetAxis(ZCom);
 
+        _xAxis.Home();
+        _yAxis.Home();
+        _zAxis.Home();
 
-        return true;
+        return _xAxis.IsHomed() && _yAxis.IsHomed() && _zAxis.IsHomed();
     }
 
     Axis GetAxis(string com)

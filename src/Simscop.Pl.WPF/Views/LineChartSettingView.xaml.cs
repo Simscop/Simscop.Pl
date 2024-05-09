@@ -1,11 +1,12 @@
 ﻿using System.Windows.Media;
+using Lift.UI.Controls;
 
 namespace Simscop.Pl.WPF.Views;
 
 /// <summary>
 /// Interaction logic for LineChartSettingView.xaml
 /// </summary>
-public partial class LineChartSettingView
+public partial class LineChartSettingView : Window
 {
     public LineChartSettingView()
     {
@@ -21,6 +22,6 @@ public partial class LineChartSettingView
         AxisYView.DataContext = VmManager.LineChartViewModel.AxisY;
         AnnotationView.DataContext = VmManager.LineChartViewModel.Annotation;
 
-        
+
     }
 }

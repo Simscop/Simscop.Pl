@@ -15,6 +15,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Lift.UI.Controls;
 using Lift.UI.Data;
+using Color = System.Windows.Media.Color;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Simscop.Pl.WPF.UserControls
 {

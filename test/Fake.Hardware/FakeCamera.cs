@@ -28,8 +28,8 @@ public class FakeCamera : ICameraService
                 var img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
                     new Scalar(color.B, color.G, color.R, color.A));
 
-                //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
-                ImageSize = new Size(img.Size().Width, img.Size().Height);
+                img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+                //ImageSize = new Size(img.Size().Width, img.Size().Height);
 
                 OnCaptureChanged?.Invoke(img);
             });
@@ -204,15 +204,24 @@ public class FakeCamera : ICameraService
 
         var color = _colors[(_count++) % _colors.Count];
 
-        img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
-                new Scalar(color.B, color.G, color.R, color.A));
+        //img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
+        //        new Scalar(color.B, color.G, color.R, color.A));
 
-        //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+        img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
 
 
         ImageSize = new Size(img.Size().Width, img.Size().Height);
         return true;
     }
+
+    public bool AutoWhiteBlanceOnce()
+    {
+        return true;
+    }
+
+    public bool StartCapture() => true;
+
+    public bool StopCapture() => false;
 
     public (double Min, double Max) ExposureRange { get; } = (50, 10000);
 

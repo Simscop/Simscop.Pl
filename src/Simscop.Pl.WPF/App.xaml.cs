@@ -9,6 +9,7 @@ using Simscop.Pl.Hardware;
 using Simscop.Pl.Hardware.Camera;
 using Simscop.Pl.WPF.Views;
 using Simscop.Pl.WPF.Views.MessageBox;
+using Application = System.Windows.Application;
 
 namespace Simscop.Pl.WPF;
 
@@ -68,27 +69,23 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        //var isFake = true;
+        var isFake = true;
 
-        //if (isFake)
-        //{
-        //    Fake();
-        //    var main = new MainWindow()
-        //    {
-        //        Background = Brushes.White,
+        if (isFake)
+        {
+            Fake();
+            var main = new MainWindow()
+            {
+                Background = Brushes.White,
 
-        //    };
-        //    main.Show();
-        //}
-        //else
-        //{
-        //    Initialize();
-        //    var main = new Splash();
-        //    main.Show();
-        //}
-
-        Fake();
-        var main = new Splash();
-        main.Show();
+            };
+            main.Show();
+        }
+        else
+        {
+            Initialize();
+            var main = new Splash();
+            main.Show();
+        }
     }
 }

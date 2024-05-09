@@ -1,12 +1,14 @@
-﻿using System.Drawing;
+﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using OpenCvSharp;
 using OxyPlot;
 using Simscop.Pl.Core;
 using Simscop.Pl.Core.Models;
 using Simscop.Pl.Core.Services;
 using Simscop.Pl.WPF.Managers;
+using Point = System.Drawing.Point;
 
 namespace Simscop.Pl.WPF.ViewModels;
 
@@ -52,13 +54,47 @@ public partial class MainViewModel : ObservableObject
 
             var index = msg.Rows * AcquireColumns + msg.Columns;
             WeakReferenceMessenger.Default.Send(new LineChangedMessage(AcquireCollection[index].Coordinates));
-
         });
     }
 
     #region Spectrometer
 
+    [ObservableProperty]
+    private string? _direcotry;
 
+    [ObservableProperty]
+    private bool _isSaveMark = false;
+
+    [RelayCommand]
+    private void SaveAcquireData()
+    {
+        if (AcquireCollection.Count == 0)
+        {
+            ToastManager.Warning("当前没有采集结果");
+            return;
+        }
+
+        if (Direcotry is null)
+        {
+            ToastManager.Warning("文件夹为空");
+            return;
+        }
+
+        if (!Directory.Exists(Direcotry)) Directory.CreateDirectory(Direcotry);
+
+        if (IsSaveMark && VmManager.CameraViewModel.MarkImg is { } img)
+        {
+            img.SaveImage(Path.Join(Direcotry, "mark.bmp"));
+        }
+            
+
+        AcquireCollection.ForEach(acquire
+            => File.WriteAllText(Path.Join(Direcotry, $"{acquire.Index.X}_{acquire.Index.Y}.csv")
+                , acquire.ToCsvString()));
+
+
+        ToastManager.Success("存储完毕");
+    }
 
     #endregion
 
@@ -151,6 +187,7 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
+            VmManager.CameraViewModel.Camera.StopCapture();
             AcquirePercent = 0;
 
             for (var i = 0; i < AcquireRows; i++)
@@ -180,7 +217,7 @@ public partial class MainViewModel : ObservableObject
 
                     AcquirePercent += 100.0 / (AcquireRows * AcquireColumns);
                 }
-
+             
             WeakReferenceMessenger.Default.Send(new LineChangedMessage(AcquireCollection[0].Coordinates));
 
             ToastManager.Success("采集完成");
@@ -189,6 +226,8 @@ public partial class MainViewModel : ObservableObject
             await Motor.AsyncSetAbsolutePosition(
                 new[] { true, true, false },
                 new[] { coor.Item1, coor.Item2, -1 });
+
+            VmManager.CameraViewModel.Camera.StartCapture();
         }
         catch (AcquireCanceledException _)
         {

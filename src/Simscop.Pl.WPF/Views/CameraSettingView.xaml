@@ -17,6 +17,23 @@
     mc:Ignorable="d">
 
     <StackPanel>
+        <UniformGrid Margin="0,5" Columns="3">
+            <Button
+                Margin="10,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding StartCaptureCommand}"
+                Content="启动相机" />
+            <Button
+                Margin="10,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding StopCaptureCommand}"
+                Content="关闭相机" />
+            <Button
+                Margin="10,0"
+                HorizontalAlignment="Stretch"
+                Command="{Binding BlanceWhiteCommand}"
+                Content="自动白平衡" />
+        </UniformGrid>
         <DockPanel>
             <TextBlock
                 Margin="10,0,33,0"
@@ -28,7 +45,7 @@
                 Margin="10,0"
                 DockPanel.Dock="Right"
                 ItemsSource="{Binding Resolutions}"
-                SelectedItem="{Binding ResolutionIndex}" />
+                SelectedIndex="{Binding ResolutionIndex}" />
         </DockPanel>
         <propertyGrid:PropertyGrid SelectedObject="{Binding}" />
     </StackPanel>

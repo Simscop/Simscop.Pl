@@ -7,13 +7,14 @@ using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Simscop.Pl.Hardware.Camera;
 using Simscop.Pl.Ui.ImageEx;
+using Window = System.Windows.Window;
 
 namespace Simscop.Pl.WPF
 {
     /// <summary>
     /// Interaction logic for DemoWindow.xaml
     /// </summary>
-    public partial class DemoWindow
+    public partial class DemoWindow : Window
     {
         public DemoWindow()
         {
@@ -33,7 +34,7 @@ namespace Simscop.Pl.WPF
 
             };
 
-            
+
         }
 
 

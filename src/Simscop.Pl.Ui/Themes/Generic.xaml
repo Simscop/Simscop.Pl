@@ -9,7 +9,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="imageEx:ImageEx">
-
                     <ScrollViewer
                         x:Name="PART_SCROLL"
                         HorizontalScrollBarVisibility="Hidden"
@@ -48,13 +47,16 @@
                                         <shapeEx:RectangleShape
                                             x:Name="PART_SHAPE_PREVIEWER"
                                             Fill="Red"
+                                            Opacity="0.5"
                                             Stroke="Blue"
                                             Visibility="Collapsed" />
                                         <shapeEx:RectangleShape
                                             x:Name="PART_SHAPE_MARKER"
                                             ContextMenu="{TemplateBinding MarkerMenu}"
                                             Fill="Black"
-                                            Stroke="Black" />
+                                            Opacity="0.5"
+                                            Stroke="Red"
+                                            StrokeThickness="5" />
                                     </InkCanvas>
                                 </imageEx:SimplePanel>
                             </Viewbox>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace Simscop.Pl.Core.Models;
 
@@ -36,4 +31,14 @@ public class AcquireModel
     /// </summary>
     public List<(double X, double Y)> Coordinates => Enumerable.Range(0, X.Length)
         .Select(item => (X[item], Y[item])).ToList();
+
+    public string ToCsvString()
+    {
+        if (X is null || Y is null || X.Length == 0 || Y.Length == 0) return string.Empty;
+
+        var header = $"Point:{Point.X},{Point.Y}\nIndex: {Index.X},{Index.Y}";
+        var content = string.Join('\n', Enumerable.Range(0, X.Length).ToList().Select(i => $"{X[i]},{Y[i]}"));
+
+        return $"{header}\n{content}";
+    }
 }

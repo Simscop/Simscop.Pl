@@ -14,13 +14,14 @@ using static SkiaSharp.HarfBuzz.SKShaper;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
 using MessageBox = Lift.UI.Controls.MessageBox;
+using Window = Lift.UI.Controls.Window;
 
 namespace Simscop.Pl.WPF;
 
 /// <summary>
 /// Interaction logic for Splash.xaml
 /// </summary>
-public partial class Splash
+public partial class Splash : Window
 {
     protected Dispatcher MainDispatcher = Application.Current.Dispatcher;
 
@@ -35,7 +36,6 @@ public partial class Splash
         InitializeComponent();
     }
 
-
     protected override void OnRender(DrawingContext drawingContext)
     {
         if (!_init) return;
@@ -46,13 +46,12 @@ public partial class Splash
 
         Task.Run(() =>
         {
-
-            //OnValidCamera();
-            //Thread.Sleep(DetectDelay);
-            //OnValidMotor();
-            //Thread.Sleep(DetectDelay);
-            //OnValidSpectrometer();
-            //Thread.Sleep(DetectDelay);
+            OnValidCamera();
+            Thread.Sleep(DetectDelay);
+            OnValidMotor();
+            Thread.Sleep(DetectDelay);
+            OnValidSpectrometer();
+            Thread.Sleep(DetectDelay);
             SafeRun(() => Laser.Text = "准备激光");
             Bottom2TopAnimation(Laser);
             Thread.Sleep(DetectDelay);
@@ -100,8 +99,6 @@ public partial class Splash
             SafeRun(Close);
         });
     }
-
-
 
     // todo 以后这个玩意要自己完成才行 
     void OnValidCamera()
@@ -238,13 +235,13 @@ public partial class Splash
             return;
         }
 
-        SwitchTextAnimation(Motor, "电动台初始化");
+        SwitchTextAnimation(Motor, "电动台归位自检中");
         Thread.Sleep(AnimationDelay);
 
         if (!HardwareManager.Motor.Initialize())
         {
             Thread.Sleep(AnimationDelay);
-            SwitchTextAnimation(Motor, "电动台初始化失败", fore: Brushes.Red);
+            SwitchTextAnimation(Motor, "电动台自检失败", fore: Brushes.Red);
             Thread.Sleep(AnimationDelay);
             HardwareManager.IsMotorOk = false;
             return;

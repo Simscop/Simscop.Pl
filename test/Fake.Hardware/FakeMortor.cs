@@ -47,13 +47,11 @@ public class FakeMortor : IMotorService
         {
             if (index.Length != 3 || pos.Length != 3) throw new Exception();
 
-            Thread.Sleep(1000);
+            if (index[0]) X += pos[0];
+            if (index[1]) Y += pos[1];
+            if (index[2]) Z += pos[2];
 
-            if (index[0]) X = pos[0];
-            if (index[1]) Y = pos[1];
-            if (index[2]) Z = pos[2];
-
-            throw new Exception();
+           
         }
         catch (Exception _)
         {
@@ -77,12 +75,8 @@ public class FakeMortor : IMotorService
     {
         if (index.Length != 3 || pos.Length != 3) throw new Exception();
 
-        Thread.Sleep(1000);
-
         if (index[0]) X = pos[0];
         if (index[1]) Y = pos[1];
         if (index[2]) Z = pos[2];
-
-        WeakReferenceMessenger.Default.Send("超出移动范围", "ToastWarning");
     });
 }
