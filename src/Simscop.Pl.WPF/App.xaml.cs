@@ -69,7 +69,7 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        var isFake = true;
+        var isFake = false;
 
         if (isFake)
         {

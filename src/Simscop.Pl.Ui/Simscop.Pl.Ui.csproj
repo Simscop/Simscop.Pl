@@ -10,12 +10,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="Lift.UI" Version="1.0.0.7" />
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+		<PackageReference Include="OxyPlot.SkiaSharp.Wpf" Version="2.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\08 lift\ui\src\Lift.UI\Lift.UI.csproj" />
-		<ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj" />
+		<!--<ProjectReference Include="..\..\..\08 lift\ui\src\Lift.UI\Lift.UI.csproj" />-->
+		<!--<ProjectReference Include="..\..\external\oxyplot\Source\OxyPlot.SkiaSharp.Wpf\OxyPlot.SkiaSharp.Wpf.csproj" />-->
 		<ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
 	</ItemGroup>
 

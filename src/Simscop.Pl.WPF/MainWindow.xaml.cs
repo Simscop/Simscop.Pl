@@ -5,6 +5,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Win32;
 using OpenCvSharp.WpfExtensions;
 using OxyPlot;
 using OxyPlot.Series;
@@ -158,8 +159,8 @@ public partial class MainWindow : Window
             HardwareManager.Camera!.OnCaptureChanged += img =>
             {
                 VmManager.CameraViewModel.Image = img.Clone();
-                //var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
-                var source = img.ToWriteableBitmap();
+                var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                //var source = img.ToWriteableBitmap();
                 ImageViewer.ImageSource = source;
                 _frame++;
             };
@@ -236,5 +237,19 @@ public partial class MainWindow : Window
         dialog.Left = Left + (Width - dialog.Width) / 2;
         dialog.Top = Top + (Height - dialog.Height) / 2;
         dialog.ShowDialog();
+    }
+
+    private void OnSaveImageClicked(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = "bmp (*.bmp)|*.bmp",
+            Title = "存储图片"
+        };
+
+        if (dialog.ShowDialog() is true)
+            VmManager.CameraViewModel.Image?.SaveImage(dialog.FileName);
+        
+       
     }
 }

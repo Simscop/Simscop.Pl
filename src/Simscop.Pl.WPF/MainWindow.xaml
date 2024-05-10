@@ -11,10 +11,10 @@
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
     xmlns:vm="clr-namespace:Simscop.Pl.WPF.ViewModels"
-    Width="1750"
+    Width="1850"
     Height="1000"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
-    Topmost="False"
+    Topmost="True"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>
@@ -45,6 +45,13 @@
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar
+                Margin="10,0"
+                Padding="10"
+                d:DataContext="{d:DesignInstance vm:MainViewModel}"
+                OverflowMode="Never">
+                <Button Content="存图" Click="OnSaveImageClicked"/>
+            </ToolBar>
             <ToolBar
                 x:Name="VisibleBar"
                 Margin="10,0"
@@ -159,7 +166,6 @@
                         Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}" />
                 </Grid>
             </ToolBar>
-
             <ToolBar
                 x:Name="SpectrometerSettingBar"
                 Margin="10,0"
