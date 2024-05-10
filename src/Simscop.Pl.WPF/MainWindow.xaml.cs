@@ -237,29 +237,4 @@ public partial class MainWindow : Window
         dialog.Top = Top + (Height - dialog.Height) / 2;
         dialog.ShowDialog();
     }
-
-    ///// <summary>
-    ///// 
-    ///// </summary>
-    ///// <param name="obj"></param>
-    ///// <param name="window"></param>
-    //public void SetCenterWith(Window window)
-    //{
-    //    var obj = this;
-    //    var windowHandle = new WindowInteropHelper(window).Handle;
-    //    var screen = Screen.FromHandle(windowHandle);
-
-    //    Debug.WriteLine($"{window.WindowState}  {screen.Bounds}");
-
-    //    var top = window.WindowState == WindowState.Maximized
-    //        ? screen.Bounds.Top + (screen.Bounds.Height - obj.Height) / 2
-    //        : window.Top + (window.ActualHeight - obj.Height) / 2;
-
-    //    var left = window.WindowState == WindowState.Maximized
-    //        ? screen.Bounds.Left + (screen.Bounds.Width - obj.Width) / 2
-    //        : window.Left - (obj.Width - window.ActualWidth) / 2;
-
-    //    obj.Top = top;
-    //    obj.Left = left;
-    //}
 }
