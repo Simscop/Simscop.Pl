@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Windows.Markup;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -55,6 +57,10 @@ public partial class MainViewModel : ObservableObject
             var index = msg.Rows * AcquireColumns + msg.Columns;
             WeakReferenceMessenger.Default.Send(new LineChangedMessage(AcquireCollection[index].Coordinates));
         });
+
+        IntegrationTime = Spectrometer.IntegrationTime;
+        MinIntegrationTime = Spectrometer.MinimumIntegrationTime;
+        MaxIntegrationTime = Spectrometer.MaximumIntegrationTime;
     }
 
     #region Spectrometer
@@ -86,7 +92,7 @@ public partial class MainViewModel : ObservableObject
         {
             img.SaveImage(Path.Join(Direcotry, "mark.bmp"));
         }
-            
+
 
         AcquireCollection.ForEach(acquire
             => File.WriteAllText(Path.Join(Direcotry, $"{acquire.Index.X}_{acquire.Index.Y}.csv")
@@ -94,6 +100,51 @@ public partial class MainViewModel : ObservableObject
 
 
         ToastManager.Success("存储完毕");
+    }
+
+    [ObservableProperty]
+    private int _integrationTime = 0;
+
+    [ObservableProperty]
+    private int _minIntegrationTime = 0;
+
+    [ObservableProperty]
+    private int _maxIntegrationTime = 0;
+
+    [RelayCommand]
+    private void SetIntegrationTime()
+    {
+        var tempLive = IsLive;
+        IsLive = false;
+
+        Spectrometer.IntegrationTime = IntegrationTime;
+
+        IsLive = tempLive;
+    }
+
+    [ObservableProperty]
+    private bool _isLive = false;
+
+    partial void OnIsLiveChanged(bool value)
+    {
+        if (!IsLive) return;
+
+        Task.Run(() =>
+        {
+            while (IsLive)
+            {
+                var data = Spectrometer.GetSpectrum();
+                var wave = Spectrometer.GetWavelengths();
+
+                var model = new AcquireModel()
+                {
+                    X = wave,
+                    Y = data
+                };
+
+                WeakReferenceMessenger.Default.Send(new LineChangedMessage(model.Coordinates));
+            }
+        });
     }
 
     #endregion
@@ -159,6 +210,8 @@ public partial class MainViewModel : ObservableObject
             throw new Exception("");
 
         IsAcquiring = !IsAcquiring;
+        var tempLive = IsLive;
+        IsLive = false;
 
         var rmMark = WeakReferenceMessenger.Default.Send<MarkderInfoRequestMessage>();
         var info = rmMark.Response;
@@ -190,34 +243,37 @@ public partial class MainViewModel : ObservableObject
             VmManager.CameraViewModel.Camera.StopCapture();
             AcquirePercent = 0;
 
-            for (var i = 0; i < AcquireRows; i++)
-                for (var j = 0; j < AcquireColumns; j++)
-                {
-                    if (!IsAcquiring) throw new AcquireCanceledException();
-
-                    var pos = (startX + j * intervalX + intervalX / 2, startY + i * intervalY + intervalY / 2);
-
-                    await Motor.AsyncSetAbsolutePosition(
-                         new[] { true, true, false },
-                         new[] { pos.Item1, pos.Item2, -1 });
-
-                    var data = Spectrometer.GetSpectrum();
-                    var wave = Spectrometer.GetWavelengths();
-
-                    var model = new AcquireModel()
+            await Task.Run(async () =>
+            {
+                for (var i = 0; i < AcquireRows; i++)
+                    for (var j = 0; j < AcquireColumns; j++)
                     {
-                        X = wave,
-                        Y = data,
-                        Point = pos,
-                        Index = new Point(j, i)
-                    };
-                    AcquireCollection.Add(model);
+                        if (!IsAcquiring) throw new AcquireCanceledException();
 
-                    WeakReferenceMessenger.Default.Send(new LineChangedMessage(model.Coordinates));
+                        var pos = (startX + j * intervalX + intervalX / 2, startY + i * intervalY + intervalY / 2);
 
-                    AcquirePercent += 100.0 / (AcquireRows * AcquireColumns);
-                }
-             
+                        await Motor.AsyncSetAbsolutePosition(
+                            new[] { true, true, false },
+                            new[] { pos.Item1, pos.Item2, -1 });
+
+                        var data = Spectrometer.GetSpectrum();
+                        var wave = Spectrometer.GetWavelengths();
+
+                        var model = new AcquireModel()
+                        {
+                            X = wave,
+                            Y = data,
+                            Point = pos,
+                            Index = new Point(j, i)
+                        };
+                        AcquireCollection.Add(model);
+
+                        WeakReferenceMessenger.Default.Send(new LineChangedMessage(model.Coordinates));
+
+                        AcquirePercent += 100.0 / (AcquireRows * AcquireColumns);
+                    }
+            });
+
             WeakReferenceMessenger.Default.Send(new LineChangedMessage(AcquireCollection[0].Coordinates));
 
             ToastManager.Success("采集完成");
@@ -235,6 +291,7 @@ public partial class MainViewModel : ObservableObject
             ToastManager.Warning("采集已经停止");
         }
 
+        IsLive = tempLive;
     }
 
     [RelayCommand]

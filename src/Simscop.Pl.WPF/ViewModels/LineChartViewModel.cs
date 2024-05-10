@@ -4,13 +4,19 @@ using Simscop.Pl.Core.Models.Charts;
 using Simscop.Pl.Core.Models.Charts.Constants;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Messaging;
+using Simscop.Pl.Core;
+using Simscop.Pl.Core.Services;
 using Simscop.Pl.WPF.Managers;
+using Simscop.Pl.Core.Models;
 
 namespace Simscop.Pl.WPF.ViewModels;
 
 public partial class LineChartViewModel : ObservableObject
 {
+    protected ISpectrometerService Spectrometer = HardwareManager.Spectrometer!;
+
     /// <summary>
     /// 
     /// </summary>
@@ -27,7 +33,7 @@ public partial class LineChartViewModel : ObservableObject
     {
         WeakReferenceMessenger.Default.Register<LineChangedMessage>(this, (obj, msg) =>
         {
-            Application.Current.Dispatcher.BeginInvoke(() => { Data = msg.Points; });
+            Application.Current?.Dispatcher.BeginInvoke(() => { Data = msg.Points; });
         });
     }
 

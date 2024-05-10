@@ -27,7 +27,7 @@ public class FakeSpectrometer : ISpectrometerService
     public int BoxcarWidth { get; set; } = 0;
     public int IntegrationStepIncrement { get; } = 0;
     public int IntegrationTime { get; set; } = 10;
-    public int MinimumIntegrationTime { get; } = 0;
+    public int MinimumIntegrationTime { get; } = 10;
     public int MaximumIntegrationTime { get; } = int.MaxValue;
     public int MaximumIntensity { get; } = 0;
     public int NumberOfDarkPixel { get; } = 0;
@@ -51,13 +51,17 @@ public class FakeSpectrometer : ISpectrometerService
     }
 
 
-    public double[] GetSpectrum() => Enumerable.Range(0, NumberOfPixels).Select(item =>
+    public double[] GetSpectrum()
     {
-        var noise = _random.NextDouble();
-        var x = (double)item / NumberOfPixels * Math.PI * 2;
+        Thread.Sleep(IntegrationTime);
+        return Enumerable.Range(0, NumberOfPixels).Select(item =>
+        {
+            var noise = _random.NextDouble();
+            var x = (double)item / NumberOfPixels * Math.PI * 2;
 
-        return BimodalCurve(x * 15, 15, 20, 70, 15, 0.5) * 1000 + noise * (1.0 / (BoxcarWidth + 1));
-    }).ToArray();
+            return BimodalCurve(x * 15, 15, 20, 70, 15, 0.5) * 1000 + noise * (1.0 / (BoxcarWidth + 1));
+        }).ToArray();
+    }
 
     public string GetEepromInfo(int slot) => "none";
 }

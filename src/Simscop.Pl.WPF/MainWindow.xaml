@@ -11,8 +11,8 @@
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:ui="clr-namespace:Simscop.Pl.Ui;assembly=Simscop.Pl.Ui"
     xmlns:vm="clr-namespace:Simscop.Pl.WPF.ViewModels"
-    Width="1400"
-    Height="800"
+    Width="1750"
+    Height="1000"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
     Topmost="False"
     mc:Ignorable="d">
@@ -25,7 +25,6 @@
                 FontWeight="Bold"
                 Text="Simscop.Pl" />
             <Menu Margin="20,0,0,0" VerticalAlignment="Center">
-                <MenuItem Click="SaveMenuClicked" Header="Save" />
                 <MenuItem
                     VerticalAlignment="Center"
                     Click="OnCameraSettingViewClicked"
@@ -34,6 +33,7 @@
                     VerticalAlignment="Center"
                     Click="OnLineChartSettingViewClicked"
                     Header="图表设置" />
+                <MenuItem Click="SaveMenuClicked" Header="导出" />
             </Menu>
         </StackPanel>
     </liftui:Window.NonClientAreaContent>
@@ -158,6 +158,27 @@
                         Content="🔽"
                         Visibility="{Binding Axis, Converter={converters:EnumVisibleConverter}, ConverterParameter={x:Static vm:MotorAxis.Z}}" />
                 </Grid>
+            </ToolBar>
+
+            <ToolBar
+                x:Name="SpectrometerSettingBar"
+                Margin="10,0"
+                Padding="10"
+                d:DataContext="{d:DesignInstance vm:MainViewModel}"
+                OverflowMode="Never">
+                <TextBlock VerticalAlignment="Center" Text="Live" />
+                <ToggleButton
+                    Margin="10,0"
+                    Background="DarkGray"
+                    IsChecked="{Binding IsLive}"
+                    Style="{DynamicResource ToggleButtonSwitch}" />
+                <liftui:NumericUpDown
+                    Width="150"
+                    Margin="10,0"
+                    Maximum="{Binding MaxIntegrationTime}"
+                    Minimum="{Binding MinIntegrationTime}"
+                    Value="{Binding IntegrationTime}" />
+                <Button Command="{Binding SetIntegrationTimeCommand}" Content="积分时间(us)" />
             </ToolBar>
         </ToolBarTray>
         <StatusBar Height="32" DockPanel.Dock="Bottom" />

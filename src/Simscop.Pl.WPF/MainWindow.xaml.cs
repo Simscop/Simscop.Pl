@@ -233,8 +233,8 @@ public partial class MainWindow : Window
         {
             DataContext = DataContext
         };
-        //SetCenterWith(dialog);
-
+        dialog.Left = Left + (Width - dialog.Width) / 2;
+        dialog.Top = Top + (Height - dialog.Height) / 2;
         dialog.ShowDialog();
     }
 

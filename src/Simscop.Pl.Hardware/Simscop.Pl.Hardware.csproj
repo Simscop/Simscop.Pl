@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
+	  <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

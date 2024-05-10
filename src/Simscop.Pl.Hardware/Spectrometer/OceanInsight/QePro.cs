@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Simscop.Pl.Core.Services;
+﻿using Simscop.Pl.Core.Services;
 using OmniDriver;
 namespace Simscop.Pl.Hardware.Spectrometer.OceanInsight;
 
