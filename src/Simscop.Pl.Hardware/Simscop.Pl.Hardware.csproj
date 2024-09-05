@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<Nullable>enable</Nullable>
-		<Platforms>x64;x86</Platforms>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,13 +17,13 @@
 	  <ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<Reference Include="NETOmniDriver-NET40">
 			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETOmniDriver-NET40.dll</HintPath>
 		</Reference>
 		<Reference Include="NETSpam-NET40">
 			<HintPath>C:\Program Files (x86)\Ocean Optics\OmniDriverSPAM\OOI_HOME\NETSpam-NET40.dll</HintPath>
 		</Reference>
-	</ItemGroup>
+	</ItemGroup>-->
 
 </Project>

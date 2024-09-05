@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Interop;
@@ -12,6 +13,7 @@ using OxyPlot.Series;
 using Simscop.Pl.Core;
 using Simscop.Pl.Ui;
 using Simscop.Pl.Ui.Extensions;
+using Simscop.Pl.WPF.Helpers;
 using Simscop.Pl.WPF.Managers;
 using Simscop.Pl.WPF.Views;
 using Simscop.Pl.WPF.Views.MessageBox;
@@ -159,8 +161,8 @@ public partial class MainWindow : Window
             HardwareManager.Camera!.OnCaptureChanged += img =>
             {
                 VmManager.CameraViewModel.Image = img.Clone();
-                var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
-                //var source = img.ToWriteableBitmap();
+                //var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                var source = img.ToWriteableBitmap();
                 ImageViewer.ImageSource = source;
                 _frame++;
             };
@@ -249,7 +251,13 @@ public partial class MainWindow : Window
 
         if (dialog.ShowDialog() is true)
             VmManager.CameraViewModel.Image?.SaveImage(dialog.FileName);
-        
-       
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        MotorKeepHelper.Keep();
+
+        base.OnClosing(e);
+
     }
 }

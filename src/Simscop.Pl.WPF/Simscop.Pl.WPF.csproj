@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<Platforms>x86</Platforms>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,6 +20,10 @@
 		<ProjectReference Include="..\Simscop.Pl.Core\Simscop.Pl.Core.csproj" />
 		<ProjectReference Include="..\Simscop.Pl.Hardware\Simscop.Pl.Hardware.csproj" />
 		<ProjectReference Include="..\Simscop.Pl.Ui\Simscop.Pl.Ui.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>

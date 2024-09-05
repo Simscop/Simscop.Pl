@@ -10,7 +10,7 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
-		<Platforms>AnyCPU;x64;x86</Platforms>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

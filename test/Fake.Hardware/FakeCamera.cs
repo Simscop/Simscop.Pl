@@ -28,7 +28,8 @@ public class FakeCamera : ICameraService
                 var img = new Mat(new OpenCvSharp.Size(1024, 1024), MatType.CV_8UC4,
                     new Scalar(color.B, color.G, color.R, color.A));
 
-                img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+                //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\icon-plus.tif");
+                //img = Cv2.ImRead(@"C:\Users\haeer\Desktop\stitch\src\1.tif");
                 //ImageSize = new Size(img.Size().Width, img.Size().Height);
 
                 OnCaptureChanged?.Invoke(img);

@@ -5,7 +5,7 @@ namespace Test.Simscop.Pl.Hardware
         [Fact]
         public void Test1()
         {
-            var omniDriver = new OmniDriver.NETVersion();
+            //var omniDriver = new OmniDriver.NETVersion();
         }
     }
 }

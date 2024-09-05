@@ -14,7 +14,7 @@
     Width="1850"
     Height="1000"
     d:DataContext="{d:DesignInstance vm:MainViewModel}"
-    Topmost="True"
+    Topmost="False"
     mc:Ignorable="d">
 
     <liftui:Window.NonClientAreaContent>
@@ -50,7 +50,7 @@
                 Padding="10"
                 d:DataContext="{d:DesignInstance vm:MainViewModel}"
                 OverflowMode="Never">
-                <Button Content="存图" Click="OnSaveImageClicked"/>
+                <Button Click="OnSaveImageClicked" Content="存图" />
             </ToolBar>
             <ToolBar
                 x:Name="VisibleBar"

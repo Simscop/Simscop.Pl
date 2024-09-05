@@ -25,9 +25,9 @@ public partial class Splash : Window
 {
     protected Dispatcher MainDispatcher = Application.Current.Dispatcher;
 
-    public int AnimationDelay { get; set; } = 1000;
+    public int AnimationDelay { get; set; } = 50;
 
-    public int DetectDelay { get; set; } = 500;
+    public int DetectDelay { get; set; } = 25;
 
     private bool _init = true;
 
@@ -246,11 +246,14 @@ public partial class Splash : Window
             HardwareManager.IsMotorOk = false;
             return;
         }
-
-
+        SwitchTextAnimation(Motor, "检测到3个电动轴", fore: Brushes.Green);
+        Thread.Sleep(AnimationDelay);
 
         HardwareManager.IsMotorOk = true;
-        SwitchTextAnimation(Motor, "检测到3个电动轴", fore: Brushes.Green);
+
+        SwitchTextAnimation(Motor, "电动台归位中", fore: Brushes.Green);
+        MotorKeepHelper.Restore();
+        Thread.Sleep(AnimationDelay);
     }
 
     void SafeRun(Action action) => MainDispatcher.BeginInvoke(action);

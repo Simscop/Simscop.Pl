@@ -9,7 +9,6 @@ namespace Fake.Hardware;
 
 public class FakeOmniDriver : IOmniDriverService
 {
-
     public string? Model { get; set; } = "FakeOmniDriver";
     public string? SerialNumber { get; set; } = "v1.0";
     public string? Fireware { get; set; } = "v1.0";

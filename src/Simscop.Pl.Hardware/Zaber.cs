@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using Simscop.Pl.Core.Services;
 using Zaber.Motion.Ascii;
@@ -12,9 +13,9 @@ namespace Simscop.Pl.Hardware;
 
 public class Zaber : IMotorService
 {
-    public const string XCom = "COM6";
+    public const string XCom = "COM4";
 
-    public const string YCom = "COM4";
+    public const string YCom = "COM3";
 
     public const string ZCom = "COM5";
 
@@ -30,8 +31,6 @@ public class Zaber : IMotorService
     public string? HardwareVersion { get; set; }
     public Dictionary<string, string>? Reserved { get; set; }
 
-
-
     public bool Valid()
     {
         return true;
@@ -43,11 +42,17 @@ public class Zaber : IMotorService
         _yAxis = GetAxis(YCom);
         _zAxis = GetAxis(ZCom);
 
-        _xAxis.Home();
-        _yAxis.Home();
-        _zAxis.Home();
+        if (_xAxis is null || _yAxis is null || _zAxis is null) return false;
 
-        return _xAxis.IsHomed() && _yAxis.IsHomed() && _zAxis.IsHomed();
+        //Task.Run(() =>
+        //{
+        //    _xAxis.Home();
+        //    _yAxis.Home();
+        //    _zAxis.Home();
+        //});
+
+        //return _xAxis.IsHomed() && _yAxis.IsHomed() && _zAxis.IsHomed();
+        return true;
     }
 
     Axis GetAxis(string com)
