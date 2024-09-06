@@ -9,17 +9,8 @@ using Connection = Zaber.Motion.Ascii.Connection;
 
 namespace Simscop.Pl.Hardware
 {
-    public class ZaberDevice : IMotorService,IMotor
+    public class ZaberDevice : IMotorService
     {
-
-        public string Unit =>Units.Length_Micrometres.ToString();
-
-        public (double X, double Y, double Z) Xyz => (X, Y, Z);
-
-        public double X => _xAxis?.GetPosition() ?? double.NaN;
-        public double Y => _yAxis?.GetPosition() ?? double.NaN;
-        public double Z => _zAxis?.GetPosition() ?? double.NaN;
-
         public string? Model { get; set; }
         public string? SerialNumber { get; set; }
         public string? Fireware { get; set; }
@@ -27,19 +18,27 @@ namespace Simscop.Pl.Hardware
         public Dictionary<string, string>? Reserved { get; set; }
         public string? LastErrorMessage { get; }
 
-        public double Threshold { get; set; } = 1;
+        private string _port = "COM9";
+        private Axis? _xAxis;
+        private Axis? _yAxis;
+        private Axis? _zAxis;
+        private Connection? connection;
+        private ObjectiveChanger? _objective;
+        private FilterChanger? _filter;
+        private double Threshold { get; set; } = 1;
+        private double RepeatCount { get; set; } = 50;
+        private int IntervalTime { get; set; } = 100;
 
-        public double RepeatCount { get; set; } = 50;
-
-        public int IntervalTime { get; set; } = 100;
-
-        public double XYSpeed => throw new NotImplementedException();
-
-        public double ZSpeed => throw new NotImplementedException();
-
-        public Task AsyncSetAbsolutePosition(bool[] index, double[] pos) => Task.Run(() => { SetRelativePosition(index, pos); });
-
-        public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() => { SetAbsolutePosition(index, pos); });
+        public string Unit => Units.Length_Micrometres.ToString();
+        public (double X, double Y, double Z) Xyz => (X, Y, Z);
+        public double X => _xAxis?.GetPosition() ?? double.NaN;
+        public double Y => _yAxis?.GetPosition() ?? double.NaN;
+        public double Z => _zAxis?.GetPosition() ?? double.NaN;
+        public double Wheel => _objective?.GetCurrentObjective() ?? double.NaN;
+        public double Filter => _objective?.GetCurrentObjective() ?? double.NaN;
+        public double XSpeed { get; private set; }
+        public double YSpeed { get; private set; }
+        public double ZSpeed { get; private set; }
 
         public bool DeInitialize()
         {
@@ -48,8 +47,12 @@ namespace Simscop.Pl.Hardware
 
         public bool Initialize()
         {
-           return InitMotor() && InitRotary();
+            return InitMotor() && InitRotary();
         }
+
+        public Task AsyncSetAbsolutePosition(bool[] index, double[] pos) => Task.Run(() => { SetRelativePosition(index, pos); });
+
+        public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() => { SetAbsolutePosition(index, pos); });
 
         public void SetAbsolutePosition(bool[] index, double[] pos)
         {
@@ -153,25 +156,17 @@ namespace Simscop.Pl.Hardware
             });
         }
 
+        public async Task SetWheelPosition(int wheelPosition) => await _objective!.ChangeAsync(wheelPosition);
+
+        public async Task SetFilterPosition(int filtePosition) => await _filter!.ChangeAsync(filtePosition);
+
         public bool Valid() => true;
 
-        private string _port = "COM9";
-
-        private Axis? _xAxis;
-
-        private Axis? _yAxis;
-
-        private Axis? _zAxis;
-
-        private Connection? connection;
-        private ObjectiveChanger? _objective;
-        private FilterChanger? _filter;
-
-        public bool InitMotor()
+        private bool InitMotor()
         {
             try
             {
-                 connection = Connection.OpenSerialPortAsync(_port).Result;
+                connection = Connection.OpenSerialPortAsync(_port).Result;
 
                 connection.EnableAlerts();
 
@@ -181,18 +176,26 @@ namespace Simscop.Pl.Hardware
 
                 if (deviceList.Length < 5) return false;
 
+                //Home
                 //Task.Run(() =>
                 //{
                 //    deviceList[3].AllAxes.Home();
                 //    deviceList[5].AllAxes.Home();
                 //});
+                //Task.Run(() =>
+                //{
+                //    _xAxis.Home();
+                //    _yAxis.Home();
+                //    _zAxis.Home();
+                //});
+
                 _zAxis = deviceList[3].GetAxis(1);
                 _xAxis = deviceList[5].GetAxis(1);
                 _yAxis = deviceList[5].GetAxis(2);
 
-                //var xSpeed = _xAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
-                //var ySpeed = _yAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
-                //var zSpeed = _zAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
+                XSpeed = _xAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
+                YSpeed = _yAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
+                ZSpeed = _zAxis.Settings.Get("maxspeed", Units.Velocity_MillimetresPerSecond);
 
                 return true;
 
@@ -204,7 +207,7 @@ namespace Simscop.Pl.Hardware
             }
         }
 
-        public bool InitRotary()
+        private bool InitRotary()
         {
             try
             {
@@ -232,59 +235,28 @@ namespace Simscop.Pl.Hardware
             }
         }
 
-        public bool InitMotor(out string connectState)
+        public bool ResetPosition()
         {
-            throw new NotImplementedException();
-        }
-
-        public bool UnInitializeMotor()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetXPosition(double xPosition)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetYPosition(double yPosition)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetZPosition(double zPosition)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetXOffset(double x)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetYOffset(double y)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetZOffset(double z)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReadPosition()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ResetPosition()
-        {
-            throw new NotImplementedException();
+            Task.Run(() =>
+            {
+                _xAxis?.Home();
+                _yAxis?.Home();
+                _zAxis?.Home();
+            });
+            return _xAxis!.IsHomed() && _yAxis!.IsHomed() && _zAxis!.IsHomed();
         }
 
         public bool Stop()
         {
-            throw new NotImplementedException();
+            //Task.Run(() =>
+            //{
+            //    _xAxis?.Stop();
+            //    _yAxis?.Stop();
+            //    _zAxis?.Stop();
+            //});
+            connection?.StopAll();
+            return true;
         }
+
     }
-    }
+}

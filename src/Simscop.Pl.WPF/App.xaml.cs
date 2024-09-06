@@ -43,7 +43,9 @@ public partial class App : Application
 
     void Initialize()
     {
-        HardwareManager.Motor = new Hardware.Zaber();
+        //HardwareManager.Motor = new Hardware.Zaber();
+        HardwareManager.Motor = new Hardware.ZaberDevice();
+
         HardwareManager.Camera = new ToupTek();
         //HardwareManager.OmniDriver = new OmniManager();
 
