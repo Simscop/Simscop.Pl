@@ -45,7 +45,14 @@ public partial class App : Application
     {
         HardwareManager.Motor = new Hardware.Zaber();
         HardwareManager.Camera = new ToupTek();
-        HardwareManager.OmniDriver = new OmniManager();
+        //HardwareManager.OmniDriver = new OmniManager();
+
+        //HardwareManager.Motor = new FakeMortor();
+
+        HardwareManager.Spectrometer = new FakeSpectrometer();
+        HardwareManager.OmniDriver = new FakeOmniDriver();
+
+        //HardwareManager.IsMotorOk = true;
     }
 
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -69,7 +76,7 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
-        var isFake = true;
+        var isFake = false;
 
         if (isFake)
         {

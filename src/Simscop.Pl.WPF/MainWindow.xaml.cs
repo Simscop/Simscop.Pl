@@ -161,8 +161,8 @@ public partial class MainWindow : Window
             HardwareManager.Camera!.OnCaptureChanged += img =>
             {
                 VmManager.CameraViewModel.Image = img.Clone();
-                //var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
-                var source = img.ToWriteableBitmap();
+                var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
+                //var source = img.ToWriteableBitmap();
                 ImageViewer.ImageSource = source;
                 _frame++;
             };

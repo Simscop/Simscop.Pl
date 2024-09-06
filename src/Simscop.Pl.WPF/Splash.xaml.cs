@@ -27,7 +27,7 @@ public partial class Splash : Window
 
     public int AnimationDelay { get; set; } = 50;
 
-    public int DetectDelay { get; set; } = 25;
+    public int DetectDelay { get; set; } = 20;
 
     private bool _init = true;
 

@@ -12,42 +12,43 @@ namespace Fake.Hardware;
 
 public class FakeSpectrometer : ISpectrometerService
 {
-    protected double[,] TempArray;
+    //protected double[,] TempArray;
 
-    protected double TempMax;
+    //protected double TempMax;
 
-    public FakeSpectrometer()
-    {
-        var path = @"D:\.test\raman\UNTITLED3.dat";
-        var data = File.ReadLines(path).Select(item =>
-        {
-            var line = item.Trim();
-            var vals = line.Split(new[] { ' ', ',', '\t' });
+    //public FakeSpectrometer()
+    //{
+        //var path = @"D:\.test\raman\UNTITLED3.dat";
+        //var data = File.ReadLines(path).Select(item =>
+        //{
+        //    var line = item.Trim();
+        //    var vals = line.Split(new[] { ' ', ',', '\t' });
 
-            if (double.TryParse(vals[0], out var x) && double.TryParse(vals[1], out var y))
-                return new[] { x, y };
+        //    if (double.TryParse(vals[0], out var x) && double.TryParse(vals[1], out var y))
+        //        return new[] { x, y };
 
-            return null;
-        }).Where(item => item != null).ToArray();
+        //    return null;
+        //}).Where(item => item != null).ToArray();
 
-        var array = new double[data.Count(), 2];
-        for (var i = 0; i < data.Count(); i++)
-        {
-            array[i, 0] = data[i]![0];
-            array[i, 1] = data[i]![1];
-        }
+        //var array = new double[data.Count(), 2];
+        //for (var i = 0; i < data.Count(); i++)
+        //{
+        //    array[i, 0] = data[i]![0];
+        //    array[i, 1] = data[i]![1];
+        //}
 
-        List<double> y = new List<double>();
-        for (int i = 0; i < array.GetLength(0); i++)
-        {
-            y.Add(array[i, 1]);
-        }
+        //List<double> y = new List<double>();
+        //for (int i = 0; i < array.GetLength(0); i++)
+        //{
+        //    y.Add(array[i, 1]);
+        //}
 
-        TempMax = y.Max();
-        TempArray = array;
+        //TempMax = y.Max();
+        //TempArray = array;
 
-        NumberOfPixels = y.Count;
-    }
+        //NumberOfPixels = y.Count;
+    //}
+
     public string? Model { get; set; } = "FakeSpectrometer";
     public string? SerialNumber { get; set; } = "v1.0";
     public string? Fireware { get; set; } = "v1.0";
@@ -76,8 +77,8 @@ public class FakeSpectrometer : ISpectrometerService
 
     public double GetWaveLength(int pixel, int channel = 0) => 0.1 * pixel;
 
-    //public double[] GetWavelengths() => Enumerable.Range(0, NumberOfPixels).Select(item => item * 0.1).ToArray();
-    public double[] GetWavelengths() => Enumerable.Range(0, NumberOfPixels).Select(item => TempArray[item, 0]).ToArray();
+    public double[] GetWavelengths() => Enumerable.Range(0, NumberOfPixels).Select(item => item * 0.1).ToArray();
+    //public double[] GetWavelengths() => Enumerable.Range(0, NumberOfPixels).Select(item => TempArray[item, 0]).ToArray();
 
     double Gaussian(double x, double mean, double stdDev)
         => 1 / (stdDev * Math.Sqrt(2 * Math.PI)) * Math.Exp(-Math.Pow(x - mean, 2) / (2 * Math.Pow(stdDev, 2)));
@@ -93,20 +94,21 @@ public class FakeSpectrometer : ISpectrometerService
     public double[] GetSpectrum()
     {
         Thread.Sleep(IntegrationTime);
-        //return Enumerable.Range(0, NumberOfPixels).Select(item =>
-        //{
-        //    var noise = _random.NextDouble();
-        //    var x = (double)item / NumberOfPixels * Math.PI * 2;
-
-        //    return BimodalCurve(x * 15, 15, 20, 70, 15, 0.5) * 2000 + noise * (1.0 / (BoxcarWidth + 1));
-        //}).ToArray();
 
         return Enumerable.Range(0, NumberOfPixels).Select(item =>
         {
             var noise = _random.NextDouble();
+            var x = (double)item / NumberOfPixels * Math.PI * 2;
 
-            return TempArray[item, 1] + TempMax * 0.005 * noise;
+            return BimodalCurve(x * 15, 15, 20, 70, 15, 0.5) * 2000 + noise * (1.0 / (BoxcarWidth + 1));
         }).ToArray();
+
+        //return Enumerable.Range(0, NumberOfPixels).Select(item =>
+        //{
+        //    var noise = _random.NextDouble();
+
+        //    return TempArray[item, 1] + TempMax * 0.005 * noise;
+        //}).ToArray();
     }
 
     public string GetEepromInfo(int slot) => "none";
