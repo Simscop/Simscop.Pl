@@ -51,6 +51,7 @@
                 d:DataContext="{d:DesignInstance vm:MainViewModel}"
                 OverflowMode="Never">
                 <Button Click="OnSaveImageClicked" Content="存图" />
+                <Button x:Name="Scan" Click="Scan_Click" Content="扫描存图" />
             </ToolBar>
             <ToolBar
                 x:Name="VisibleBar"

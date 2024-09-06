@@ -42,6 +42,7 @@ public class Zaber : IMotorService
         _yAxis = GetAxis(YCom);
         _zAxis = GetAxis(ZCom);
 
+
         if (_xAxis is null || _yAxis is null || _zAxis is null) return false;
 
         //Task.Run(() =>

@@ -64,6 +64,12 @@ public partial class MotorViewModel : ObservableObject
         await Motor.AsyncSetRelativePosition(new[] { false, false, true }, 
             new[] { positive ? IntervalX : -IntervalX, positive ? IntervalY : -IntervalY, positive ? IntervalZ : -IntervalZ });
 
+    public async Task AsyncSetAbsolutionPosition(bool[] index, double[] pos) => await Motor.AsyncSetRelativePosition(index, pos);
+
+    public void SetAbsolutionPosition(bool[] index, double[] pos) => Motor.SetAbsolutePosition(index, pos);
+
+    
+
     public void StartTimer()
     {
         if (!HardwareManager.IsMotorOk) return;

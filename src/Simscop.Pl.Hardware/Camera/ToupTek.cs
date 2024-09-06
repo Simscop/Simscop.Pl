@@ -138,7 +138,7 @@ public class ToupTek : ICameraService
         //while (_currentImage is null || count++ < 4)
         //    Thread.Sleep((int)exp);
 
-        img = _currentImage.Clone();
+        img = _currentImage?.Clone();
         GC.Collect();
 
         _passCapture = true;
@@ -348,5 +348,5 @@ public class ToupTek : ICameraService
 
     public event Action<Mat>? OnCaptureChanged;
 
-    public Dispatcher? SafeThreading { get; set; } = Application.Current.Dispatcher;
+    public Dispatcher? SafeThreading { get; set; } = Application.Current?.Dispatcher;
 }

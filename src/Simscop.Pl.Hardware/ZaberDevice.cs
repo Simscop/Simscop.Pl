@@ -47,12 +47,13 @@ namespace Simscop.Pl.Hardware
 
         public bool Initialize()
         {
-            return InitMotor() && InitRotary();
+            //return InitMotor() && InitRotary();//todo,正置获取转轮异常
+            return InitMotor();
         }
 
-        public Task AsyncSetAbsolutePosition(bool[] index, double[] pos) => Task.Run(() => { SetRelativePosition(index, pos); });
+        public Task AsyncSetAbsolutePosition(bool[] index, double[] pos) => Task.Run(() => { SetAbsolutePosition(index, pos); });
 
-        public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() => { SetAbsolutePosition(index, pos); });
+        public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() => { SetRelativePosition (index, pos); });
 
         public void SetAbsolutePosition(bool[] index, double[] pos)
         {
@@ -84,7 +85,8 @@ namespace Simscop.Pl.Hardware
                     var temp = funcPos(item);
                     var count = 0;
 
-                    axis.MoveRelative(pos[item]);
+                    axis.MoveAbsolute(pos[item]);
+                    //axis.MoveAbsolute(pos[item], Units.Length_Millimetres, true, XSpeed, Units.Velocity_MillimetresPerSecond);
 
                     while (Math.Abs(temp - funcPos(item)) > Threshold && count < RepeatCount)
                     {
@@ -135,7 +137,7 @@ namespace Simscop.Pl.Hardware
                     var temp = funcPos(item);
                     var count = 0;
 
-                    axis.MoveAbsolute(pos[item]);
+                    axis.MoveRelative(pos[item]);
 
                     while (Math.Abs(temp - funcPos(item)) > Threshold && count < RepeatCount)
                     {
@@ -179,14 +181,14 @@ namespace Simscop.Pl.Hardware
                 //Home
                 //Task.Run(() =>
                 //{
-                //    deviceList[3].AllAxes.Home();
-                //    deviceList[5].AllAxes.Home();
+                deviceList[3].AllAxes.Home();
+                //deviceList[5].AllAxes.Home();
                 //});
                 //Task.Run(() =>
                 //{
-                //    _xAxis.Home();
-                //    _yAxis.Home();
-                //    _zAxis.Home();
+                //_xAxis.Home();
+                //_yAxis.Home();
+                //_zAxis.Home();
                 //});
 
                 _zAxis = deviceList[3].GetAxis(1);
@@ -237,12 +239,12 @@ namespace Simscop.Pl.Hardware
 
         public bool ResetPosition()
         {
-            Task.Run(() =>
-            {
+            //Task.Run(() =>
+            //{
                 _xAxis?.Home();
                 _yAxis?.Home();
-                _zAxis?.Home();
-            });
+                //_zAxis?.Home();
+            //});
             return _xAxis!.IsHomed() && _yAxis!.IsHomed() && _zAxis!.IsHomed();
         }
 

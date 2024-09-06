@@ -11,6 +11,7 @@ using OpenCvSharp.WpfExtensions;
 using OxyPlot;
 using OxyPlot.Series;
 using Simscop.Pl.Core;
+using Simscop.Pl.Hardware;
 using Simscop.Pl.Ui;
 using Simscop.Pl.Ui.Extensions;
 using Simscop.Pl.WPF.Helpers;
@@ -161,6 +162,9 @@ public partial class MainWindow : Window
             HardwareManager.Camera!.OnCaptureChanged += img =>
             {
                 VmManager.CameraViewModel.Image = img.Clone();
+
+                //Debug.WriteLine($"**  {VmManager.CameraViewModel.Image.Size()}");
+
                 var source = img.ToWriteableBitmap(0, 0, PixelFormats.Bgr32, null);
                 //var source = img.ToWriteableBitmap();
                 ImageViewer.ImageSource = source;
@@ -258,6 +262,62 @@ public partial class MainWindow : Window
         MotorKeepHelper.Keep();
 
         base.OnClosing(e);
+
+    }
+
+    private bool _isFlag = false;
+
+    private void Scan_Click(object sender, RoutedEventArgs e)
+    {
+        var xPos = HardwareManager.Motor.X;
+        var yPos = HardwareManager.Motor.Y;
+
+        _isFlag = !_isFlag;
+
+        Debug.WriteLine($"{xPos} {yPos}");
+
+        Task.Run(() =>
+        {
+            double tran = 1 *80000;// nm= 微米/1000，步长
+            int count = 10;//次数
+            for (int i = 0; i < count; i++)
+            {
+                for (int j = 0; j < count; j++)
+                {
+                    if (!_isFlag) return;
+                    double x = 0;
+                    double y = 0;
+                    if (i % 2 == 0)
+                    {
+                        x = i;
+                        y = j;
+                    }
+                    else if (i % 2 == 1)
+                    {
+                        x = i;
+                        y = count - j - 1;
+                    }
+                    Debug.WriteLine($"{x} {y}");
+                    //15233078.00
+                    //await VmManager.MotorViewModel.AsyncSetAbsolutionPosition(new[] { true, true, false }, new double[] { x * tran, y * tran, 0 });
+
+                    VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { xPos + y * tran, yPos + x * 60000, 0 });
+                    Debug.WriteLine($"{i} {j} {x} {y}");
+                    Thread.Sleep(1000);
+
+                    var img = VmManager.CameraViewModel.Image;
+
+                    img?.SaveImage(@"C:\\Users\\Simsc\\Desktop\\ZZJ\\" + $"{x + 1}_{y + 1}.bmp");
+
+                    //zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { x * tran, y * tran, 0 });
+                    //Console.WriteLine($"{x + 1}_{y + 1}   x_{zaberDevice.X} y_{zaberDevice.Y} z_{zaberDevice.Z}");
+                }
+            }
+        });
+
+
+
+
 
     }
 }

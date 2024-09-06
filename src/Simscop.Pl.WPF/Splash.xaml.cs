@@ -254,6 +254,7 @@ public partial class Splash : Window
         SwitchTextAnimation(Motor, "电动台归位中", fore: Brushes.Green);
         MotorKeepHelper.Restore();
         Thread.Sleep(AnimationDelay);
+
     }
 
     void SafeRun(Action action) => MainDispatcher.BeginInvoke(action);
