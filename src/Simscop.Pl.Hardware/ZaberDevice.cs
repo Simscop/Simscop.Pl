@@ -181,8 +181,11 @@ namespace Simscop.Pl.Hardware
                 //Home
                 //Task.Run(() =>
                 //{
-                deviceList[3].AllAxes.Home();
+
+                //deviceList[3].AllAxes.Home();
                 //deviceList[5].AllAxes.Home();
+
+
                 //});
                 //Task.Run(() =>
                 //{

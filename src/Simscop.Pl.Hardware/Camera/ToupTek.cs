@@ -65,6 +65,7 @@ public class ToupTek : ICameraService
         _camera.get_ExpTimeRange(out var min, out var max, out _);
         ExposureRange = (min / 1000.0, max / 1000.0);
 
+        
 
         return _camera.StartPullModeWithCallback(new(DelegateOnEventCallback));
     }

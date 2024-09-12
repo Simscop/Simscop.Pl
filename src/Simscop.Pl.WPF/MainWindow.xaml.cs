@@ -35,6 +35,8 @@ public partial class MainWindow : Window
 
     private bool _isRender = false;
 
+    private ScanView _scanView;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -53,6 +55,8 @@ public partial class MainWindow : Window
         RegisterInvoke();
         RegisterMessage();
         RegisterViewModel();
+
+         _scanView = new ScanView();
     }
 
     private void RegisterViewModel()
@@ -269,20 +273,32 @@ public partial class MainWindow : Window
 
     private void Scan_Click(object sender, RoutedEventArgs e)
     {
+
+        VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { point1.x, point1.y, 15590561.00 });
+        Thread.Sleep(1000);
         var xPos = HardwareManager.Motor.X;
         var yPos = HardwareManager.Motor.Y;
-
         _isFlag = !_isFlag;
-
         Debug.WriteLine($"{xPos} {yPos}");
-
+       Stopwatch sw = Stopwatch.StartNew();
         Task.Run(() =>
         {
-            double tran = 1 *80000;// nm= 微米/1000，步长
-            int count = 10;//次数
-            for (int i = 0; i < count; i++)
+            sw.Start();
+
+            //double xTran = 170000 * 12;//nm
+            //double yTran = 100000 * 25;
+            //int count = 5;//次数
+            //double xcount = count;
+            //double ycount = count;
+
+            double xTran = 170000 * 3;//nm
+            double yTran = 100000 * 3;
+            int xcount = 20;
+            int ycount = 20;
+
+            for (int i = 0; i < xcount; i++)
             {
-                for (int j = 0; j < count; j++)
+                for (int j = 0; j < ycount; j++)
                 {
                     if (!_isFlag) return;
                     double x = 0;
@@ -295,29 +311,64 @@ public partial class MainWindow : Window
                     else if (i % 2 == 1)
                     {
                         x = i;
-                        y = count - j - 1;
+                        y = ycount - j - 1;
                     }
-                    Debug.WriteLine($"{x} {y}");
-                    //15233078.00
-                    //await VmManager.MotorViewModel.AsyncSetAbsolutionPosition(new[] { true, true, false }, new double[] { x * tran, y * tran, 0 });
 
-                    VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { xPos + y * tran, yPos + x * 60000, 0 });
-                    Debug.WriteLine($"{i} {j} {x} {y}");
-                    Thread.Sleep(1000);
+                    VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { xPos + y * xTran, yPos + x * yTran, 0 });
+                    Debug.WriteLine($"{i} {j} ");
+                    Thread.Sleep(50);
 
                     var img = VmManager.CameraViewModel.Image;
+                    Task.Run(() =>
+                    {
+                        img?.SaveImage(@"C:\\Users\\Simsc\\Desktop\\ZZJ\\" + $"{x + 1}_{y + 1}.bmp");
+                        img?.Dispose();
+                    });
 
-                    img?.SaveImage(@"C:\\Users\\Simsc\\Desktop\\ZZJ\\" + $"{x + 1}_{y + 1}.bmp");
-
-                    //zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { x * tran, y * tran, 0 });
-                    //Console.WriteLine($"{x + 1}_{y + 1}   x_{zaberDevice.X} y_{zaberDevice.Y} z_{zaberDevice.Z}");
                 }
             }
+
+            //76578626.00
+            //45238948.00
+            //15258689.00
+            sw.Stop();
+            Debug.WriteLine($"time: {sw.ElapsedMilliseconds} ms");
+            MessageBox.Show("complete!");
         });
+    }
+
+    static (double x, double y) point1;
+    static (double x, double y) point2;
+
+    private void SavePoint1_Click(object sender, RoutedEventArgs e)
+    {
+        point1.x = HardwareManager.Motor.X;
+        point1.y = HardwareManager.Motor.Y;
+        MessageBox.Show($"point1  x_{point1.x}  y_{point1.y}");
+    }
+
+    private void SavePoint2_Click(object sender, RoutedEventArgs e)
+    {
+        point2.x = HardwareManager.Motor.X;
+        point2.y = HardwareManager.Motor.Y;
+        MessageBox.Show($"point2  x_{point2.x}  y_{point2.y}");
+    }
 
 
-
-
-
+    private void ScanView_Click(object sender, RoutedEventArgs e)
+    {
+      
+        if (_scanView.WindowState == WindowState.Minimized)
+        {
+            _scanView.WindowState = WindowState.Normal;
+        }
+        else if (!_scanView.IsVisible)
+        {
+            _scanView.Show();
+        }
+        else
+        {
+            _scanView.Activate();
+        }
     }
 }

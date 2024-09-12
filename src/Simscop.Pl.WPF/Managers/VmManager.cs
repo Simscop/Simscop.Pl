@@ -29,4 +29,9 @@ public static class VmManager
     /// 
     /// </summary>
     public static MotorViewModel MotorViewModel = new();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static ScanViewModel ScanViewModel = new();  
 }

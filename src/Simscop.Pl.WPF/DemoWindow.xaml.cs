@@ -25,7 +25,7 @@ namespace Simscop.Pl.WPF
 
             Debug.WriteLine($"{camera.Valid() && camera.Initialize()}");
 
-            camera.Exposure = 1000;
+            camera.Exposure = 50;
 
             camera.OnCaptureChanged += mat =>
             {

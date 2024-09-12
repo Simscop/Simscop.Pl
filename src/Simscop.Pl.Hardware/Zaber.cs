@@ -92,6 +92,12 @@ public class Zaber : IMotorService
 
     public int IntervalTime { get; set; } = 100;
 
+    public double XSpeed => throw new NotImplementedException();
+
+    public double YSpeed => throw new NotImplementedException();
+
+    public double ZSpeed => throw new NotImplementedException();
+
     public Task AsyncSetRelativePosition(bool[] index, double[] pos) => Task.Run(() =>
     {
         // ReSharper disable once ConvertToLocalFunction

@@ -26,6 +26,10 @@ public partial class MotorViewModel : ObservableObject
     {
         if (HardwareManager.Motor is null) throw new Exception();
         Motor = HardwareManager.Motor;
+
+        XSpeed= Motor.XSpeed;
+        YSpeed= Motor.YSpeed;
+        ZSpeed= Motor.ZSpeed;
     }
 
     [ObservableProperty]
@@ -36,6 +40,10 @@ public partial class MotorViewModel : ObservableObject
 
     [ObservableProperty]
     private double _z;
+
+    [ObservableProperty] private double _xSpeed;
+    [ObservableProperty] private double _ySpeed;
+    [ObservableProperty] private double _zSpeed;
 
     [ObservableProperty]
     private double _intervalX;
@@ -79,6 +87,7 @@ public partial class MotorViewModel : ObservableObject
             X = Motor?.X ?? 0;
             Y = Motor?.Y ?? 0;
             Z = Motor?.Z ?? 0;
+
         };
         _motorTimer.Start();
     }

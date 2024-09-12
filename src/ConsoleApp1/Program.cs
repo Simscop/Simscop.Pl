@@ -44,9 +44,15 @@ using Simscop.Pl.Hardware;
 
 ZaberDevice zaberDevice = new ZaberDevice();
 Console.WriteLine(zaberDevice.Initialize());
+zaberDevice.ResetPosition();
 
-//Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
-//zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { 1000000, 1000000, 0 });
+for (int i = 0; i < 10; i++)
+{
+    Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
+    zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { 10000 * i, 10000 * i, 0 });
+    Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
+}
+
 //Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
 //zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { 2000000, 2000000, 0 });
 //Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
@@ -59,41 +65,29 @@ Console.WriteLine(zaberDevice.Initialize());
 //zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { 0, 0, 0 });
 //Console.WriteLine($"x_{zaberDevice.X} y_{zaberDevice.Y} x_{zaberDevice.Z}");
 
-double tran = 2 * 1000000;//微米，步长
-int count = 5;//次数
-for (int i = 0; i < count; i++)
-{
-    for (int j = 0; j < count; j++)
-    {
-        double x = 0;
-        double y = 0;
-        if (i % 2 == 0)
-        {
-            x = i;
-            y = j;
-        }
-        else if (i % 2 == 1)
-        {
-            x = i;
-            y = count - j - 1;
-        }
-
-        zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { x * tran, y * tran, 15233078 });
-        Console.WriteLine($"{x + 1}_{y + 1}   x_{zaberDevice.X} y_{zaberDevice.Y} z_{zaberDevice.Z}");
-    }
-}
-
-//ICameraService Camera = new ToupTek();
-//Console.WriteLine(Camera.Valid());
-//Console.WriteLine(Camera.Initialize());
-//Console.WriteLine(Camera.IsAutoExposure=false);
-//Console.WriteLine(Camera.Resolution = Camera.Resolutions[2]);
-//VmManager.CameraViewModel.FirstInit();
-//HardwareManager.Camera!.OnCaptureChanged += img =>
+//double tran = 2 * 1000000;//微米，步长
+//int count = 5;//次数
+//for (int i = 0; i < count; i++)
 //{
-//    //Console.WriteLine(Camera.Capture(out Mat? img));
-//    img?.SaveImage($"C:\\Users\\Simsc\\Desktop\\ZZJ\\{DateTime.Now.ToString("hh-mm-ss-fff")}.bmp");
-//};
+//    for (int j = 0; j < count; j++)
+//    {
+//        double x = 0;
+//        double y = 0;
+//        if (i % 2 == 0)
+//        {
+//            x = i;
+//            y = j;
+//        }
+//        else if (i % 2 == 1)
+//        {
+//            x = i;
+//            y = count - j - 1;
+//        }
+
+//        zaberDevice.SetAbsolutePosition(new[] { true, true, true }, new double[] { x * tran, y * tran, 15233078 });
+//        Console.WriteLine($"{x + 1}_{y + 1}   x_{zaberDevice.X} y_{zaberDevice.Y} z_{zaberDevice.Z}");
+//    }
+//}
 
 
 

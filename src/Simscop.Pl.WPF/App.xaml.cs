@@ -78,6 +78,9 @@ public partial class App : Application
 
         // todo 添加硬件初始化的功能
 
+        //DemoWindow demoWindow = new DemoWindow();
+        //demoWindow.Show();
+
         var isFake = false;
 
         if (isFake)

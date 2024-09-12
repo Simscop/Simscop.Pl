@@ -140,6 +140,7 @@ public partial class CameraViewModel : ObservableObject
         if (!_flag)
         {
             Resolutions = Camera.Resolutions;
+            ResolutionIndex = 1;
             _flag = true;
         }
         Exposure = Camera!.Exposure;

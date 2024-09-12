@@ -36,6 +36,21 @@ public interface IMotorService : IDeviceService
     /// </summary>
     public double Z { get; }
 
+    /// <summary>
+    /// 当前x坐标
+    /// </summary>
+    public double XSpeed { get; }
+
+    /// <summary>
+    /// 当前y坐标
+    /// </summary>
+    public double YSpeed { get; }
+
+    /// <summary>
+    /// 当前z坐标
+    /// </summary>
+    public double ZSpeed { get; }
+
     // todo 添加xyz单个和组合的移动方式
 
     // todo 添加移动校验
