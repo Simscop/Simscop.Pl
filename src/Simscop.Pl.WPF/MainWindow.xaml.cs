@@ -37,6 +37,9 @@ public partial class MainWindow : Window
 
     private ScanView _scanView;
 
+    private CameraSettingView _cameraSettingView;
+
+
     public MainWindow()
     {
         InitializeComponent();
@@ -57,6 +60,10 @@ public partial class MainWindow : Window
         RegisterViewModel();
 
          _scanView = new ScanView();
+        _cameraSettingView = new CameraSettingView()
+        {
+            Background = Brushes.White,
+        };
     }
 
     private void RegisterViewModel()
@@ -229,13 +236,27 @@ public partial class MainWindow : Window
         Application.Current.Shutdown();
     }
 
-    private void OnCameraSettingViewClicked(object sender, RoutedEventArgs e)
+private void OnCameraSettingViewClicked(object sender, RoutedEventArgs e)
     {
-        var view = new CameraSettingView()
+        //var _cameraSettingView = new CameraSettingView()
+        //{
+        //    Background = Brushes.White,
+        //};
+        //_cameraSettingView.Show();
+
+
+        if (_cameraSettingView.WindowState == WindowState.Minimized)
         {
-            Background = Brushes.White,
-        };
-        view.Show();
+            _cameraSettingView.WindowState = WindowState.Normal;
+        }
+        else if (!_cameraSettingView.IsVisible)
+        {
+            _cameraSettingView.Show();
+        }
+        else
+        {
+            _cameraSettingView.Activate();
+        }
     }
 
     private void SaveMenuClicked(object sender, RoutedEventArgs e)

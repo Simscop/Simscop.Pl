@@ -19,5 +19,7 @@ namespace Simscop.Pl.WPF
             this.Hide();
             e.Cancel = true;
         }
+
+
     }
 }

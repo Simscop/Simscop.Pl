@@ -30,6 +30,13 @@ public class FakeMortor : IMotorService
     public double X { get; private set; } = 0;
     public double Y { get; private set; } = 0;
     public double Z { get; private set; } = 0;
+
+    public double XSpeed => throw new NotImplementedException();
+
+    public double YSpeed => throw new NotImplementedException();
+
+    public double ZSpeed => throw new NotImplementedException();
+
     public void SetRelativePosition(bool[] index, double[] pos)
     {
         if (index.Length != 3 || pos.Length != 3) throw new Exception();

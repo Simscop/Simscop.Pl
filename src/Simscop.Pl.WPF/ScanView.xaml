@@ -7,11 +7,12 @@
     xmlns:local="clr-namespace:Simscop.Pl.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Simscop.Pl.WPF.ViewModels"
-    Title="ScanView"
+    Title="{Binding Title}"
     Width="600"
     Height="350"
     d:DataContext="{d:DesignInstance vm:ScanViewModel}"
     ResizeMode="CanMinimize"
+    Topmost="True"
     mc:Ignorable="d">
     <Grid>
         <StackPanel>
@@ -211,6 +212,13 @@
                     Text="{Binding Root}"
                     TextAlignment="Left" />
             </DockPanel>
+
+            <!--<UniformGrid>
+                <Button Command="{Binding StartPosCommand}" Content="起点" />
+                <Button Command="{Binding EndPosCommand}" Content="终点" />
+            </UniformGrid>-->
+
         </StackPanel>
+
     </Grid>
 </liftui:Window>

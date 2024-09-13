@@ -23,17 +23,48 @@ namespace Simscop.Pl.WPF.ViewModels
         }
 
         [ObservableProperty]
+        private double _percent = 0;
+
+        partial void OnPercentChanged(double value)
+        {
+            if (value == 0) Title = "扫描存图";
+
+            if (Percent > 1)
+                Title = $"扫描存图 ({value:F2} %)({Rows}*{Cols})";
+        }
+
+        [ObservableProperty]
+        private string _title = $"扫描存图";
+
+        /// <summary>
+        /// 列数
+        /// 对应X-Weight
+        /// </summary>
+        [ObservableProperty]
+        private int _cols = 0;
+
+        /// <summary>
+        /// 行数
+        /// 对应Y-Height
+        /// </summary>
+        [ObservableProperty]
+        private int _rows = 0;
+
+        [ObservableProperty]
         private int _selectIndex = 0;
 
         partial void OnSelectIndexChanged(int value)
         {
             switch(value)
             {
-
                 case 0:
-                    XStep = 170000;
-                    YStep = 100000;
+                    XStep = 540000;
+                    YStep = 420000;
                     break;
+                //case 0:
+                //    XStep = 170000;
+                //    YStep = 100000;
+                //    break;
                 case 1:
                     XStep = 140000;
                     YStep = 105000;
@@ -133,14 +164,17 @@ namespace Simscop.Pl.WPF.ViewModels
             double xSnap = Math.Abs(XStart - XEnd);
             double ySnap = Math.Abs(YStart - YEnd);
 
-            int rows = (int)Math.Ceiling(xSnap / XStep);
-            int cols = (int)Math.Ceiling(ySnap / YStep);
-            rows=rows==0?1:rows;
-            cols=cols==0?1:cols;
+            Rows = (int)Math.Ceiling(xSnap / XStep);
+            Cols = (int)Math.Ceiling(ySnap / YStep);
+            Rows = Rows == 0?1: Rows;
+            Cols = Cols == 0?1: Cols;
+
+            Percent = 0;
+            int scanCount = Cols * Rows;
+            double _per = (1 / (double)(scanCount)) * 100;//进度
 
             List<Task> saveTasks = new();
-
-            MessageBoxResult result =MessageBox.Show($"{rows}行*{cols}列", "拼接行列", MessageBoxButton.OKCancel);
+            MessageBoxResult result =MessageBox.Show($"{Cols}行（Y）* {Rows}列 (X)", "拼接行列", MessageBoxButton.OKCancel);
             if (result == MessageBoxResult.OK)
             {
                 IsXYStart = "停止扫描";
@@ -156,13 +190,18 @@ namespace Simscop.Pl.WPF.ViewModels
 
             //拼接图实际位置左下角为起始点
             double pointStartX = Math.Min(XStart, XEnd);
-            double pointStartY= Math.Max(YStart, YEnd);
+            double pointStartY = Math.Max(YStart, YEnd);
 
-            int time1 = (int)(Math.Abs(XStart - XEnd) / VmManager.MotorViewModel.XSpeed / 1000);
-            int time2 = (int)(Math.Abs(YStart - YEnd) / VmManager.MotorViewModel.YSpeed / 1000);
+            int time1 = (int)(Math.Abs(XStart - XEnd) / VmManager.MotorViewModel.XSpeed);
+            int time2 = (int)(Math.Abs(YStart - YEnd) / VmManager.MotorViewModel.YSpeed);
+            int time0 = (time1 + time2) / 100 + 50;
+
+            int time5 = time0 > 1200 ? time0 : 1200;
 
             //到达原始位置，z不做移动
             VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { pointStartX, pointStartY, 0 });
+
+            Thread.Sleep(time5);
 
             double xPos = 0;
             double yPos = 0;
@@ -170,34 +209,41 @@ namespace Simscop.Pl.WPF.ViewModels
             double b = 0;
             string file=string.Empty;
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < cols; j++)
-                {
+                for (int j = 0; j < Cols; j++)
+                {              
                     if (cancellationToken.IsCancellationRequested)
                     {
                         IsXYStart = "开始扫描";
+                        cancellationTokenSource = new CancellationTokenSource();
                         Debug.WriteLine("Stitcher return");
                         return;
                     }
-
+        
                     if (i % 2 == 0)
                     {
                         a = i;
                         b = j;
+
                     }
                     else if (i % 2 == 1)
                     {
                         a = i;
-                        b = cols - j - 1;
+                        b = Cols - j - 1;
                     }
 
+                    //xPos = pointStartX + b * XStep;
+                    //yPos = pointStartY + a * YStep;
                     xPos = pointStartX + b * XStep;
-                    yPos = pointStartY + a * YStep;
+                    yPos = pointStartY - a * YStep;
+
                     VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { xPos, yPos, 0 });
 
                     double expose = VmManager.CameraViewModel.Exposure;
-                    Thread.Sleep((int)(expose * 2));
+                    double delay = 100;
+                    int time = (int)(delay > expose * 3 ? delay : expose * 3);
+                    Thread.Sleep(time);
 
                     Debug.WriteLine($"i-j__{i}-{j} x-y__{a+1}-{b+1} xpos_{xPos} y_pos_{yPos}");
 
@@ -207,6 +253,7 @@ namespace Simscop.Pl.WPF.ViewModels
                     {
                         img?.SaveImage(filename);
                         img?.Dispose();
+                        Percent += _per;
                     });
                     saveTasks.Add(saveTask);
 
@@ -242,6 +289,18 @@ namespace Simscop.Pl.WPF.ViewModels
             ProcessStartInfo psi = new ProcessStartInfo("Explorer.exe");
             psi.Arguments = "/e,/select," + fileFullName;
             Process.Start(psi);
+        }
+
+        [RelayCommand]
+        void StartPos()
+        {
+            VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { XStart, YStart, 0 });
+        }
+
+        [RelayCommand]
+        void EndPos()
+        {
+            VmManager.MotorViewModel.SetAbsolutionPosition(new[] { true, true, false }, new double[] { XEnd,YEnd , 0 });
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.ComponentModel;
+using System.Windows.Media;
 using Lift.UI.Controls;
 
 namespace Simscop.Pl.WPF.Views;
@@ -18,6 +19,12 @@ public partial class CameraSettingView : Window
         base.OnRender(drawingContext);
 
         DataContext = VmManager.CameraViewModel;
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        this.Hide();
+        e.Cancel = true;
     }
 }
 
